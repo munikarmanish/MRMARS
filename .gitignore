@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+migrations/
+root/
+*.sublime-project
+*.sublime-workspace
+
