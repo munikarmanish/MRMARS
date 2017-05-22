@@ -1,0 +1,15 @@
+{% extends 'layouts/base.html' %}
+
+{% block head_title %}
+{% endblock %}
+
+{% block content %}
+<form action="" method="POST" accept-charset="utf-8" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.title}}
+    <button class="btn ink-reaction btn-primary btn-raised" type="submit">Create</button>
+</form>
+{% endblock %}
+
+{% block extra_js%}
+{% endblock %}

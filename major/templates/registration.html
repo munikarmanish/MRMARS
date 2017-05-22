@@ -22,7 +22,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
     <head>
         <meta charset="utf-8" />
-        <title>Metronic | User Login 2</title>
+        <title>Mr. Mars | User Registration</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="" name="description" />
@@ -60,7 +60,7 @@ License: You must have a valid license purchased only from themeforest(the above
         <!-- BEGIN LOGIN -->
         <div class="content">
             <!-- BEGIN REGISTRATION FORM -->
-            <form class="login-form" action="index.html" method="post">
+            <form class="login-form" action="." method="post">
             {% csrf_token %}
                 <div class="form-title">
                     <span class="form-title">Sign Up</span>
@@ -81,13 +81,16 @@ License: You must have a valid license purchased only from themeforest(the above
                 <p class="hint"> Enter your account details below: </p>
                 <div class="form-group">
                     <label class="control-label visible-ie8 visible-ie9">Username</label>
-                    <input class="form-control placeholder-no-fix" type="text" autocomplete="off" placeholder="Username" name="username" /> </div>
+                    {{userForm.username}}
+                </div>
                 <div class="form-group">
                     <label class="control-label visible-ie8 visible-ie9">Password</label>
-                    <input class="form-control placeholder-no-fix" type="password" autocomplete="off" id="register_password" placeholder="Password" name="password" /> </div>
+                    {{userForm.password1}}
+                </div>
                 <div class="form-group">
                     <label class="control-label visible-ie8 visible-ie9">Re-type Your Password</label>
-                    <input class="form-control placeholder-no-fix" type="password" autocomplete="off" placeholder="Re-type Your Password" name="rpassword" /> </div>
+                    {{userForm.password2}}
+                </div>
                 <div class="form-group margin-top-20 margin-bottom-20">
                     <label class="mt-checkbox mt-checkbox-outline">
                         <input type="checkbox" name="tnc" /> I agree to the

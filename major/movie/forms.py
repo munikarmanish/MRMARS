@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from .models import *
 
 
 class UserForm(forms.ModelForm):
@@ -10,7 +11,7 @@ class UserForm(forms.ModelForm):
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={
         'class': 'form-control',
         'required': 'true',
-        'placeholder': 'Password Confirm'}))
+        'placeholder': 'Re-type Password'}))
 
     class Meta:
         model = User
@@ -50,32 +51,13 @@ class UserForm(forms.ModelForm):
         return password2
 
 
-class UserUpdateForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = [
-            "first_name",
-            "last_name",
-        ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        for field in iter(self.fields):
-            self.fields[field].widget.attrs.update({'class': 'form-control'})
-
-        self.fields["first_name"].widget.attrs.update(
-            {'placeholder': 'First Name'})
-        self.fields["last_name"].widget.attrs.update(
-            {'placeholder': 'Last Name', 'required': 'true'})
-
-
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={
-        'class': 'form-control',
+        'class': 'form-control form-control-solid placeholder-no-fix',
         'required': 'true',
         'placeholder': 'Username'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={
-        'class': 'form-control',
+        'class': 'form-control form-control-solid placeholder-no-fix',
         'required': 'true',
         'placeholder': 'Password', }))
 
@@ -84,3 +66,8 @@ class LoginForm(forms.Form):
             "username",
             "password",
         ]
+
+
+class GenreForm(forms.Form):
+    class Meta:
+        model = Genre
