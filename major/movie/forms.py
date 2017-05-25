@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import *
 
+from django.template.defaultfilters import slugify
+
 
 class UserForm(forms.ModelForm):
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={
@@ -68,6 +70,24 @@ class LoginForm(forms.Form):
         ]
 
 
-class GenreForm(forms.Form):
+class GenreForm(forms.ModelForm):
     class Meta:
         model = Genre
+        fields = [
+            "title",
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in iter(self.fields):
+            self.fields[field].widget.attrs.update(
+                {'class': 'form-control'})
+        self.fields["title"].widget.attrs.update(
+            {'placeholder': 'Genre Name', 'required': 'true'})
+
+    def save(self, commit=True):
+        instance = super(GenreForm, self).save(commit=False)
+        instance.slug = slugify(self.cleaned_data.get('title'))
+        if commit:
+            instance.save()
+        return instance
