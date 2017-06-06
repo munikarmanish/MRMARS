@@ -12,6 +12,8 @@
         <meta content="" name="description" />
         <meta content="" name="author" />
         {% include 'layouts/include/head.html'%}
+        {% block extra_head %}
+        {% endblock %}
         <link rel="shortcut icon" href="favicon.ico" /> </head>
     <!-- END HEAD -->
 
@@ -373,9 +375,9 @@
                         <div class="page-header-menu">
                             <div class="container">
                                 <!-- BEGIN HEADER SEARCH BOX -->
-                                <form class="search-form" action="page_general_search.html" method="GET">
+                                <form class="search-form" action="{% url 'movie:movieList' %}" method="GET">
                                     <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search" name="query">
+                                        <input type="search" class="form-control" placeholder="Search" name="q" value="{{request.GET.q}}"/>
                                         <span class="input-group-btn">
                                             <a href="javascript:;" class="btn submit">
                                                 <i class="icon-magnifier"></i>
@@ -1220,6 +1222,8 @@
             </div>
         </div>
         {% include 'layouts/include/javascript.html'%}
+        {% block extra_js %}
+        {% endblock %}
     </body>
 
 </html>

@@ -1,9 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.views.generic import TemplateView, View, CreateView
+from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView, View, CreateView, ListView, DetailView, FormView, UpdateView
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.db.models import Q
 
 from .forms import *
 from .models import *
@@ -90,20 +92,75 @@ class LogoutView(View):
         return redirect('movie:login')
 
 
-# class GenreCreateView(View):
-#     def get(self, request):
-#         form = GenreForm()
-#         context = {
-#             'form': form,
-#         }
-#         return render(request, 'genreCreate.html', context)
-
-
 class GenreCreateView(CreateView):
     model = Genre
     form_class = GenreForm
     template_name = 'genreCreate.html'
     success_url = reverse_lazy("movie:test")
+
+
+class GenreUpdateView(UpdateView):
+    model = Genre
+    form_class = GenreForm
+    template_name = 'genreUpdate.html'
+    success_url = reverse_lazy("movie:test")
+
+
+class MovieCreateView(CreateView):
+    model = Movie
+    form_class = MovieForm
+    template_name = 'movieCreate.html'
+    success_url = reverse_lazy("movie:test")
+
+
+class MovieUpdateView(UpdateView):
+    model = Movie
+    form_class = MovieForm
+    template_name = 'movieUpdate.html'
+    success_url = reverse_lazy("movie:test")
+
+
+class MovieListView(ListView):
+    model = Movie
+    template_name = 'movieList.html'
+    context_object_name = 'movies'
+    paginate_by = 1
+
+    def get_queryset(self):
+        movies = Movie.objects.filter(deleted_at=None)
+        query = self.request.GET.get("q")
+        if query:
+            movies = movies.filter(
+                Q(title__icontains=query) |
+                Q(genre__title__icontains=query)
+            ).distinct()
+        return movies
+
+
+class MovieDetailView(FormView):
+    form_class = ReviewForm
+    template_name = 'movieDetail.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.movie_slug = kwargs['slug']
+        self.movie = Movie.objects.get(slug=self.movie_slug)
+        return super(MovieDetailView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(MovieDetailView, self).get_context_data(**kwargs)
+
+        context['movie'] = self.movie
+        context['reviews'] = Review.objects.filter(movie=self.movie)
+        return context
+
+    def form_valid(self, form):
+        review = Review()
+        review.user = self.request.user
+        review.movie = self.movie
+        review.review = form.cleaned_data.get('review')
+        review.save()
+        return HttpResponseRedirect(self.movie.get_absolute_url())
+
 
 # class ProductCreateView(SuccessMessageMixin, CreateView):
 #     model = Product

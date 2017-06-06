@@ -1,0 +1,82 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+{% block head_title %}
+{% endblock %}
+{% block extra_head %}
+<link type="text/css" rel="stylesheet" href="{% static 'assets/apps/css/select2/select2.css' %}" />
+<link type="text/css" rel="stylesheet" href="{% static 'assets/apps/css/bootstrap-datepicker/datepicker3.css' %}" />
+
+{% endblock %}
+
+{% block content %}
+<div class="portlet light ">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="icon-equalizer font-red-sunglo"></i>
+            <span class="caption-subject font-red-sunglo bold uppercase">Movie Create</span>
+        </div>
+    </div>
+    <div class="portlet-body form">
+        <!-- BEGIN FORM-->
+        <form action="" method="post" class="form-horizontal">
+        {% csrf_token %}
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="{{form.title.id_for_label}}">Movie Title</label>
+                    <div class="col-md-6">
+                    {{form.title}}
+                    <span class="help-block"> A new movie. </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="{{form.photo.id_for_label}}">Movie Photo</label>
+                    <div class="col-md-6">
+                    {{form.photo}}
+                    <span class="help-block"> Movie Photo. </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="{{form.description.id_for_label}}">Movie Description</label>
+                    <div class="col-md-6">
+                    {{form.description}}
+                    {{form.media}}
+                    <span class="help-block"> A new movie description. </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="{{form.year.id_for_label}}">Movie Years</label>
+                    <div class="col-md-6">
+                    {{form.released_date}}
+                    <span class="help-block"> Released year. </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="{{form.genre.id_for_label}}">Movie Genre</label>
+                    <div class="col-md-6">
+                    {{form.genre}}
+                    <span class="help-block"> Movie Genre. </span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="form-actions">
+                <div class="row">
+                    <div class="col-md-offset-3 col-md-4">
+                        <button type="submit" class="btn green">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- END FORM-->
+    </div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="{% static 'assets/apps/scripts/select2/select2.min.js' %}"></script>
+<script src="{% static 'assets/apps/scripts/bootstrap-datepicker/bootstrap-datepicker.js' %}"></script>
+<script type="text/javascript">
+    $("#select2").select2();
+    $('#datepicker').datepicker({autoclose: true, todayHighlight: true, format: "yyyy/mm/dd"});
+</script>
+
+{% endblock %}

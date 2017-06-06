@@ -7,4 +7,12 @@ urlpatterns = [
     url(r'^login/$', LoginView.as_view(), name="login"),
     url(r'^logout/$', LogoutView.as_view(), name="logout"),
     url(r'^genre/create/$', GenreCreateView.as_view(), name="genreCreate"),
+    url(r'^genre/(?P<slug>[\w-]+)/update/$',
+        GenreUpdateView.as_view(), name="genreUpdate"),
+    url(r'^movie/create/$', MovieCreateView.as_view(), name="movieCreate"),
+    url(r'^movie/(?P<slug>[\w-]+)/update/$',
+        MovieUpdateView.as_view(), name="movieUpdate"),
+    url(r'^movie/list/$', MovieListView.as_view(), name="movieList"),
+    url(r'^movie/(?P<slug>[\w-]+)/$',
+        MovieDetailView.as_view(), name='movieDetail'),
 ]

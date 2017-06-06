@@ -1,0 +1,84 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+{% block head_title %}
+{% endblock %}
+{% block extra_head %}
+<link href="{% static 'assets/pages/css/blog.min.css' %}" rel="stylesheet" type="text/css" />
+{% endblock%}
+
+{% block content %}
+<div class=" blog-content-1">
+    <div class="row">
+    {% for movie in movies %}
+        <div class="col-md-3">
+            <div class="blog-post-sm bordered blog-container">
+                <div class="blog-img-thumb">
+                    <a href="javascript:;">
+                        <img src="{% static 'assets/pages/img/page_general_search/03.jpg' %}" />
+                    </a>
+                </div>
+                <div class="blog-post-content">
+                    <h2 class="blog-title blog-post-title">
+                        <a href="javascript:;">{{movie.title}}</a>
+                    </h2>
+                    <p class="blog-post-desc">
+                        {% with description=movie.description|safe %}
+                        {{description|truncatewords:"10"}}
+                        {% endwith %}
+                    </p>
+                    <div class="blog-post-foot">
+                        <div class="blog-post-meta">
+                            <i class="icon-calendar font-blue"></i>
+                            <a href="javascript:;">{{movie.year}}</a>
+                        </div>
+                        <div class="blog-post-meta">
+                            <i class="icon-tag font-blue"></i>
+                            <a href="javascript:;">{{movie.genre}}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+                    <!-- pagination -->
+                <div class="paginate">
+                    <div class="row">
+
+                        <!-- prev & next -->
+                        <div class="col-md-2 col-xs-3">
+                            <ul class="list-unstyled list-inline">
+                                {% if page_obj.has_previous %}
+                                <li><a href="/movie/list?page={{ page_obj.previous_page_number }}"><i class="fa fa-angle-left"></i></a>
+                                </li>
+                                {% else %}
+                                <li><a href=""><i class="fa fa-angle-left"></i></a>
+                                </li>
+                                {% endif %}
+                                {% if page_obj.has_next %}
+                                <li><a href="/movie/list?page={{ page_obj.next_page_number }}"><i class="fa fa-angle-right"></i></a>
+                                </li>
+                                {% else %}
+                                <li><a href=""><i class="fa fa-angle-right"></i></a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                        <!-- .prev & next -->
+                        <!-- prev & next -->
+                        <div class="col-md-10 col-xs-9">
+                            <ul class="list-unstyled list-inline text-right">
+                                {% for pagenum in page_obj.paginator.page_range %}
+                                <li><a href="/movie/list?page={{ pagenum }}" {% ifequal pagenum page_obj.number%}class="active"{% endifequal %}>{{ pagenum }} </a>
+                                </li>
+                                {% endfor%}
+                            </ul>
+                        </div>
+                        <!-- .prev & next -->
+
+                    </div>
+                </div>
+                <!-- .pagination -->
+</div>
+{% endblock %}

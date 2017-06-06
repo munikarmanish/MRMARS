@@ -3,6 +3,10 @@ from django.utils import timezone
 from django.utils.functional import cached_property
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
+from ckeditor.fields import RichTextField
+from django.core.urlresolvers import reverse
+
+
 # Create your models here.
 
 
@@ -31,14 +35,21 @@ class Genre(Timestampable):
         return self.title
 
 
+def uploadPhoto(instance, filename):
+    return "%s/%s/%s" % ('movie', instance.title, filename)
+
+
 class Movie(Timestampable):
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    photo = models.ImageField(upload_to=uploadPhoto)
+    description = RichTextField()
     slug = models.SlugField(unique=True)
-    year = models.IntegerField(validators=[MinValueValidator(1900),
-                                           MaxValueValidator(timezone.now().year)])
-    genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
+    released_date = models.DateField()
+    genre = models.ManyToManyField(Genre)
     rating = models.FloatField(default=0)
+
+    def get_absolute_url(self):
+        return reverse("movie:movieDetail", kwargs={"slug": self.slug})
 
     def __str__(self):
         return self.title
@@ -50,11 +61,11 @@ class Review(Timestampable):
     review = models.TextField()
     rating = models.FloatField(default=0)
 
+    class Meta:
+        ordering = ["-created_at"]
+
     def __str__(self):
         return self.user.username + self.movie.title
-
-    class Meta:
-        unique_together = (("user", "movie"),)
 
 
 class Recommendation(Timestampable):

@@ -1,0 +1,64 @@
+{% extends 'layouts/base.html' %}
+{% load staticfiles %}
+{% block head_title %}
+{% endblock %}
+{% block extra_head %}
+<link href="{% static 'assets/pages/css/blog.min.css' %}" rel="stylesheet" type="text/css" />
+{% endblock%}
+
+
+{% block content %}
+<div class="blog-page blog-content-2">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="blog-single-content bordered blog-container">
+                <div class="blog-single-head">
+                    <h1 class="blog-single-head-title">{{movie.title}}</h1>
+                    <div class="blog-single-head-date">
+                        <i class="icon-calendar font-blue"></i>
+                        <a href="javascript:;">Released Year: {{movie.year}}</a>
+                    </div>
+                </div>
+                <div class="blog-single-desc">
+                    {{movie.description|safe}}
+                </div>
+                <div class="blog-single-foot">
+                    <ul class="blog-post-tags">
+                        {% for genre in movie.genre.all %}
+                        <li class="uppercase">
+                            <a href="javascript:;">{{genre}}</a>
+                        </li>
+                        {%endfor%}
+                    </ul>
+                </div>
+                <div class="blog-comments">
+                {% if request.user.is_authenticated %}
+                    <h3 class="sbold blog-comments-title">Leave A Review</h3>
+                    <form action="." method="POST" >
+                    {% csrf_token %}
+                        <div class="form-group">
+                            {{form.review}}
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn blue uppercase btn-md sbold btn-block">Submit</button>
+                        </div>
+                    </form>
+                {% endif %}
+                    <h3 class="sbold blog-comments-title">Reviews</h3>
+                    <div class="c-comment-list">
+                    {% for review in reviews %}
+                        <div class="media">
+                            <div class="media-body">
+                                <h4 class="media-heading">
+                                    <a href="#">{{review.user.username}}</a> on
+                                    <span class="c-date">{{review.created_at|timesince}}</span>
+                                </h4>{{review.review}} </div>
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
