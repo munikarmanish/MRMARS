@@ -124,7 +124,7 @@ class MovieListView(ListView):
     model = Movie
     template_name = 'movieList.html'
     context_object_name = 'movies'
-    paginate_by = 1
+    paginate_by = 2
 
     def get_queryset(self):
         movies = Movie.objects.filter(deleted_at=None)

@@ -58,7 +58,8 @@ class Movie(Timestampable):
 class Review(Timestampable):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    review = models.TextField()
+    summary = models.CharField(max_length=255)
+    review = models.TextField(null=True, blank=True)
     rating = models.FloatField(default=0)
 
     class Meta:

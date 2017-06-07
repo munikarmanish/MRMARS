@@ -16,7 +16,7 @@
                     <h1 class="blog-single-head-title">{{movie.title}}</h1>
                     <div class="blog-single-head-date">
                         <i class="icon-calendar font-blue"></i>
-                        <a href="javascript:;">Released Year: {{movie.year}}</a>
+                        <a href="javascript:;">Released Year: {{movie.released_date}}</a>
                     </div>
                 </div>
                 <div class="blog-single-desc">
@@ -37,6 +37,9 @@
                     <form action="." method="POST" >
                     {% csrf_token %}
                         <div class="form-group">
+                            {{form.summary}}
+                        </div>
+                        <div class="form-group">
                             {{form.review}}
                         </div>
                         <div class="form-group">
@@ -52,7 +55,7 @@
                                 <h4 class="media-heading">
                                     <a href="#">{{review.user.username}}</a> on
                                     <span class="c-date">{{review.created_at|timesince}}</span>
-                                </h4>{{review.review}} </div>
+                                </h4>{{review.summary}} </div>
                         </div>
                     {% endfor %}
                     </div>

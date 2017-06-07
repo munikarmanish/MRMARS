@@ -117,9 +117,9 @@ class MovieForm(forms.ModelForm):
         self.fields["description"].widget.attrs.update(
             {'placeholder': 'Movie Description', 'required': 'true'})
         self.fields["released_date"].widget.attrs.update(
-            {'placeholder': 'Movie Released Date(yy-mm-dd)', 'required': 'true', 'id':'datepicker'})
+            {'placeholder': 'Movie Released Date(yy-mm-dd)', 'required': 'true', 'id': 'datepicker'})
         self.fields["genre"].widget.attrs.update(
-            {'placeholder': 'Movie Genre', 'required': 'true', 'id':'select2'})
+            {'placeholder': 'Movie Genre', 'required': 'true', 'id': 'select2'})
 
     def save(self, commit=True):
         instance = super(MovieForm, self).save(commit=False)
@@ -134,6 +134,7 @@ class ReviewForm(forms.ModelForm):
         model = Review
 
         fields = [
+            'summary',
             'review',
         ]
 
@@ -142,5 +143,7 @@ class ReviewForm(forms.ModelForm):
         for field in iter(self.fields):
             self.fields[field].widget.attrs.update(
                 {'class': 'form-control c-square'})
+        self.fields["summary"].widget.attrs.update(
+            {'placeholder': 'Write Your Review Summary (in 255 char)', 'required': 'true'})
         self.fields["review"].widget.attrs.update(
-            {'placeholder': 'Write Your Review', 'required': 'true'})
+            {'placeholder': 'Write Your Review (Optional)', })
