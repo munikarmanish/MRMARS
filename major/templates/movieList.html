@@ -6,6 +6,10 @@
 <link href="{% static 'assets/pages/css/blog.min.css' %}" rel="stylesheet" type="text/css" />
 {% endblock%}
 
+{% block page_title %}
+<h1>Movie List</h1>
+{% endblock %}
+
 {% block content %}
 <div class=" blog-content-1">
     <div class="row">
@@ -14,12 +18,12 @@
             <div class="blog-post-sm bordered blog-container">
                 <div class="blog-img-thumb">
                     <a href="javascript:;">
-                        <img src="{% static 'assets/pages/img/page_general_search/03.jpg' %}" />
+                        <img src="{{movie.photo.url}}" />
                     </a>
                 </div>
                 <div class="blog-post-content">
                     <h2 class="blog-title blog-post-title">
-                        <a href="javascript:;">{{movie.title}}</a>
+                        <a href="{% url 'movie:movieDetail' movie.slug %}">{{movie.title}}</a>
                     </h2>
                     <p class="blog-post-desc">
                         {% with description=movie.description|safe %}

@@ -51,7 +51,7 @@
                                                         <i class="icon-user"></i> My Profile </a>
                                                 </li>
                                                 <li>
-                                                    <a href="page_user_login_1.html">
+                                                    <a href="{% url 'movie:logout' %}">
                                                         <i class="icon-key"></i> Log Out </a>
                                                 </li>
                                             </ul>
@@ -139,9 +139,6 @@
                                     <!-- BEGIN PAGE TITLE -->
                                     <div class="page-title">
                                         {% block page_title %}
-                                        <h1>Dashboard
-                                            <small>dashboard & statistics</small>
-                                        </h1>
                                         {% endblock %}
                                     </div>
                                     <!-- END PAGE TITLE -->
@@ -154,13 +151,7 @@
                                     <!-- BEGIN PAGE BREADCRUMBS -->
                                     <ul class="page-breadcrumb breadcrumb">
                                         {% block breadcrumb %}
-                                        <li>
-                                            <a href="index.html">Home</a>
-                                            <i class="fa fa-circle"></i>
-                                        </li>
-                                        <li>
-                                            <span>Dashboard</span>
-                                        </li>
+
                                         {% endblock %}
                                     </ul>
                                     <!-- END PAGE BREADCRUMBS -->

@@ -6,6 +6,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Q
+from django.template.defaultfilters import slugify
+
 
 from .forms import *
 from .models import *
@@ -112,6 +114,16 @@ class MovieCreateView(CreateView):
     template_name = 'movieCreate.html'
     success_url = reverse_lazy("movie:test")
 
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.slug = slugify(form.cleaned_data.get('title'))
+        instance.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print(form.errors)
+        return redirect(reverse_lazy("movie:movieCreate"))
+
 
 class MovieUpdateView(UpdateView):
     model = Movie
@@ -119,12 +131,18 @@ class MovieUpdateView(UpdateView):
     template_name = 'movieUpdate.html'
     success_url = reverse_lazy("movie:test")
 
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.slug = slugify(form.cleaned_data.get('title'))
+        instance.save()
+        return super().form_valid(form)
+
 
 class MovieListView(ListView):
     model = Movie
     template_name = 'movieList.html'
     context_object_name = 'movies'
-    paginate_by = 2
+    paginate_by = 4
 
     def get_queryset(self):
         movies = Movie.objects.filter(deleted_at=None)
@@ -158,6 +176,7 @@ class MovieDetailView(FormView):
         review.user = self.request.user
         review.movie = self.movie
         review.review = form.cleaned_data.get('review')
+        review.summary = form.cleaned_data.get('summary')
         review.save()
         return HttpResponseRedirect(self.movie.get_absolute_url())
 

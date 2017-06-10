@@ -6,6 +6,9 @@
 <link href="{% static 'assets/pages/css/blog.min.css' %}" rel="stylesheet" type="text/css" />
 {% endblock%}
 
+{% block page_title %}
+<h1>Movie Detail</h1>
+{% endblock %}
 
 {% block content %}
 <div class="blog-page blog-content-2">
@@ -31,7 +34,7 @@
                         {%endfor%}
                     </ul>
                 </div>
-                <div class="blog-comments">
+                <div class="comments">
                 {% if request.user.is_authenticated %}
                     <h3 class="sbold blog-comments-title">Leave A Review</h3>
                     <form action="." method="POST" >

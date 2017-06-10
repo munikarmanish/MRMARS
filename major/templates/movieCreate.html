@@ -8,6 +8,10 @@
 
 {% endblock %}
 
+{% block page_title %}
+<h1>Movie Create</h1>
+{% endblock %}
+
 {% block content %}
 <div class="portlet light ">
     <div class="portlet-title">
@@ -18,7 +22,7 @@
     </div>
     <div class="portlet-body form">
         <!-- BEGIN FORM-->
-        <form action="" method="post" class="form-horizontal">
+        <form action="" method="post" class="form-horizontal" enctype="multipart/form-data">
         {% csrf_token %}
             <div class="form-body">
                 <div class="form-group">

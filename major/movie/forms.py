@@ -113,20 +113,13 @@ class MovieForm(forms.ModelForm):
         self.fields["title"].widget.attrs.update(
             {'placeholder': 'Movie Name', 'required': 'true'})
         self.fields["photo"].widget.attrs.update(
-            {'placeholder': 'Movie Photo', 'required': 'true'})
+            {'placeholder': 'Movie Photo'})
         self.fields["description"].widget.attrs.update(
             {'placeholder': 'Movie Description', 'required': 'true'})
         self.fields["released_date"].widget.attrs.update(
-            {'placeholder': 'Movie Released Date(yy-mm-dd)', 'required': 'true', 'id': 'datepicker'})
+            {'placeholder': 'Movie Released Date(yyyy-mm-dd)', 'required': 'true', 'id': 'date'})
         self.fields["genre"].widget.attrs.update(
             {'placeholder': 'Movie Genre', 'required': 'true', 'id': 'select2'})
-
-    def save(self, commit=True):
-        instance = super(MovieForm, self).save(commit=False)
-        instance.slug = slugify(self.cleaned_data.get('title'))
-        if commit:
-            instance.save()
-        return instance
 
 
 class ReviewForm(forms.ModelForm):
