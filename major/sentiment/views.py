@@ -13,9 +13,11 @@ class SentimentDemo(FormView):
         review = form.cleaned_data.get('review')
         rating = sentiment.rating(review)
         print(rating)
+        sentimentClass = sentiment.sentiment_from_rating(rating)
 
         context = {
             'form': form,
             'rating': rating,
+            'sentimentClass': sentimentClass,
         }
         return render(self.request, template_name=self.template_name, context=context)

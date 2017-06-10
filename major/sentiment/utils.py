@@ -11,15 +11,15 @@ CoreNLP = StanfordCoreNLP(CORENLP_SERVER)
 
 def sentiment_from_rating(rating):
     if rating <= 1.7:
-        return "very negative"
+        return "Very Negative"
     elif rating <= 2.6:
-        return "negative"
+        return "Negative"
     elif rating <= 3.4:
-        return "neutral"
+        return "Neutral"
     elif rating <= 4.3:
-        return "positive"
+        return "Positive"
     elif rating <= 5.0:
-        return "very positive"
+        return "Very Positive"
     else:
         raise ValueError("Rating out of range")
 
