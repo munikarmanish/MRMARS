@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include('movie.urls', namespace='movie')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
-
+    url(r'^sentiment/', include('sentiment.urls', namespace='sentiment')),
 ]
 
 

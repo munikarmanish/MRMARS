@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Sentiment Analysis Demo</title>
+  </head>
+  <body>
+
+    <div class="form">
+      <form method="post" action=".">{% csrf_token %}
+
+        <div class="form-group">
+          {{ form.review }}
+          <div class="error">
+            {{ form.review.errors }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <button type="submit">Submit</button>
+        </div>
+
+      </form>
+    </div>
+
+    {% if rating %}
+    <div class="result">
+      Predicted rating = {{ rating|floatformat:3 }}
+    </div>
+    {% endif %}
+
+  </body>
+</html>
