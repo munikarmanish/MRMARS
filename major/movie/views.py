@@ -17,6 +17,9 @@ from sentiment import utils as sentiment
 
 # Create your views here.
 
+class RedirectView(View):
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect('/movie/list')
 
 class Test(TemplateView):
     template_name = "test.html"
