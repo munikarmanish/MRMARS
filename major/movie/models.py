@@ -2,9 +2,9 @@ from django.db import models
 from django.utils import timezone
 from django.utils.functional import cached_property
 from django.contrib.auth.models import User
-from django.core.validators import MinValueValidator, MaxValueValidator
 from ckeditor.fields import RichTextField
 from django.core.urlresolvers import reverse
+from django.contrib.postgres.fields import JSONField
 
 
 # Create your models here.
@@ -48,6 +48,9 @@ class Movie(Timestampable):
     genre = models.ManyToManyField(Genre)
     rating = models.FloatField(default=0)
 
+    class Meta:
+        ordering = ["slug",]
+
     def get_absolute_url(self):
         return reverse("movie:movieDetail", kwargs={"slug": self.slug})
 
@@ -64,6 +67,7 @@ class Review(Timestampable):
 
     class Meta:
         ordering = ["-created_at"]
+        unique_together = (("user", "movie"),)
 
     def __str__(self):
         return self.user.username + self.movie.title
@@ -79,3 +83,10 @@ class Recommendation(Timestampable):
 
     class Meta:
         ordering = ['-score']
+
+
+class Data(models.Model):
+    data = JSONField()
+
+    def __str__(self):
+        return 'Training data'

@@ -11,6 +11,9 @@ from django.template.defaultfilters import slugify
 
 from .forms import *
 from .models import *
+from movie import utils as recommender
+from sentiment import utils as sentiment
+
 
 # Create your views here.
 
@@ -56,6 +59,7 @@ class RegistrationView(View):
 
 class LoginView(View):
     def get(self, request):
+
         form = LoginForm()
         context = {
             'form': form,
@@ -92,6 +96,18 @@ class LogoutView(View):
             logout(request)
         messages.success(request, "Logged Out Successfully")
         return redirect('movie:login')
+
+
+class ProfileView(View):
+    def get(self, request, *args, **kwargs):
+        userSlug = kwargs['slug']
+        user = User.objects.get(username=userSlug)
+        predictions, predictions_dict = recommender.recommend(user.username)
+        context = {
+            'user': user,
+            'predictions': predictions,
+        }
+        return render(request, 'profile.html', context)
 
 
 class GenreCreateView(CreateView):
@@ -173,10 +189,14 @@ class MovieDetailView(FormView):
 
     def form_valid(self, form):
         review = Review()
+        if Review.objects.filter(user=self.request.user, movie=self.movie):
+            messages.warning(self.request, 'You have already reviewed.')
+            return HttpResponseRedirect(self.movie.get_absolute_url())
         review.user = self.request.user
         review.movie = self.movie
         review.review = form.cleaned_data.get('review')
         review.summary = form.cleaned_data.get('summary')
+        review.rating = sentiment.rating(review.summary)
         review.save()
         return HttpResponseRedirect(self.movie.get_absolute_url())
 

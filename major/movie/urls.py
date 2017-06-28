@@ -1,8 +1,10 @@
 from django.conf.urls import url
 from .views import *
+from . import signals
 
 urlpatterns = [
     url(r'^test/$', Test.as_view(), name="test"),
+    url(r'^profile/(?P<slug>[\w-]+)/$', ProfileView.as_view(), name="profile"),
     url(r'^register/$', RegistrationView.as_view(), name="register"),
     url(r'^login/$', LoginView.as_view(), name="login"),
     url(r'^logout/$', LogoutView.as_view(), name="logout"),

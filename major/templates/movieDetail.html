@@ -18,6 +18,7 @@
                 <div class="blog-single-head">
                     <h1 class="blog-single-head-title">{{movie.title}}</h1>
                     <div class="blog-single-head-date">
+                        <span class="movie-stars" data-rating="{{movie.rating}}" data-num-stars="5" ></span>
                         <i class="icon-calendar font-blue"></i>
                         <a href="javascript:;">Released Year: {{movie.released_date}}</a>
                     </div>
@@ -54,10 +55,11 @@
                     <div class="c-comment-list">
                     {% for review in reviews %}
                         <div class="media">
-                            <div class="media-body">
+                            <div class="media-body" >
                                 <h4 class="media-heading">
-                                    <a href="#">{{review.user.username}}</a> on
-                                    <span class="c-date">{{review.created_at|timesince}}</span>
+                                <span class="review-stars" data-rating="{{review.rating}}" data-num-stars="5" ></span> by
+                                    <a href="{% url 'movie:profile' review.user.username  %}">{{review.user.username}}</a>
+                                    <span class="c-date">{{review.created_at|timesince}}</span> ago
                                 </h4>{{review.summary}} </div>
                         </div>
                     {% endfor %}
@@ -67,4 +69,26 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block extra_js %}
+<script>
+    $.fn.stars = function() {
+        return $(this).each(function() {
+            var rating = $(this).data("rating");
+            if ((rating%1) == 0){
+                rating = Math.floor(rating)
+            }
+
+            var numStars = $(this).data("numStars");
+            var fullStar = new Array(Math.floor(rating + 1)).join('<i class="fa fa-star"></i>');
+            var halfStar = ((rating%1) !== 0) ? '<i class="fa fa-star-half-empty"></i>': '';
+            var noStar = new Array(Math.floor(numStars + 1 - rating)).join('<i class="fa fa-star-o"></i>');
+            $(this).html(fullStar + halfStar + noStar);
+
+        });
+    }
+
+    $('.review-stars').stars()
+    $('.movie-stars').stars()
+</script>
 {% endblock %}

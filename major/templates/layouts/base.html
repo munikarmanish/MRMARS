@@ -47,7 +47,7 @@
                                             </a>
                                             <ul class="dropdown-menu dropdown-menu-default">
                                                 <li>
-                                                    <a href="page_user_profile_1.html">
+                                                    <a href="{% url 'movie:profile' request.user.username %}">
                                                         <i class="icon-user"></i> My Profile </a>
                                                 </li>
                                                 <li>

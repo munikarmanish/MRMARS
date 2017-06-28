@@ -25,6 +25,7 @@
                     <h2 class="blog-title blog-post-title">
                         <a href="{% url 'movie:movieDetail' movie.slug %}">{{movie.title}}</a>
                     </h2>
+                    <span class="movie-stars" data-rating="{{movie.rating}}" data-num-stars="5" ></span>
                     <p class="blog-post-desc">
                         {% with description=movie.description|safe %}
                         {{description|truncatewords:"5"}}
@@ -67,3 +68,25 @@
   </ul>
 </div>
 {% endblock %}
+{% block extra_js %}
+<script>
+    $.fn.stars = function() {
+        return $(this).each(function() {
+            var rating = $(this).data("rating");
+            if ((rating%1) == 0){
+                rating = Math.floor(rating)
+            }
+
+            var numStars = $(this).data("numStars");
+            var fullStar = new Array(Math.floor(rating + 1)).join('<i class="fa fa-star"></i>');
+            var halfStar = ((rating%1) !== 0) ? '<i class="fa fa-star-half-empty"></i>': '';
+            var noStar = new Array(Math.floor(numStars + 1 - rating)).join('<i class="fa fa-star-o"></i>');
+            $(this).html(fullStar + halfStar + noStar);
+
+        });
+    }
+
+    $('.movie-stars').stars()
+</script>
+{% endblock %}
+
