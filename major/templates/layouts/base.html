@@ -46,14 +46,27 @@
                                                 <span class="username username-hide-mobile">{{request.user.username}}</span>
                                             </a>
                                             <ul class="dropdown-menu dropdown-menu-default">
-                                                <li>
-                                                    <a href="{% url 'movie:profile' request.user.username %}">
-                                                        <i class="icon-user"></i> My Profile </a>
-                                                </li>
-                                                <li>
-                                                    <a href="{% url 'movie:logout' %}">
-                                                        <i class="icon-key"></i> Log Out </a>
-                                                </li>
+                                              {% if request.user.is_authenticated %}
+                                                  <li>
+                                                      <a href="{% url 'movie:profile' request.user.username %}">
+                                                          <i class="icon-user"></i> My Profile </a>
+                                                  </li>
+                                                  <li>
+                                                      <a href="{% url 'movie:logout' %}">
+                                                          <i class="icon-key"></i> Log Out </a>
+                                                  </li>
+                                              {% else %}
+                                                  <li>
+                                                    <a href="{% url 'movie:login' %}">
+                                                      <i class="icon-user"></i>Login
+                                                    </a>
+                                                  </li>
+                                                  <li>
+                                                    <a href="{% url 'movie:register' %}">
+                                                      <i class="icon-user"></i>Register
+                                                    </a>
+                                                  </li>
+                                              {% endif %}
                                             </ul>
                                         </li>
                                         <!-- END USER LOGIN DROPDOWN -->
