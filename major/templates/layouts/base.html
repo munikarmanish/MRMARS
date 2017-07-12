@@ -28,8 +28,8 @@
                             <div class="container">
                                 <!-- BEGIN LOGO -->
                                 <div class="page-logo">
-                                    <a href="index.html">
-                                        <img src="{% static 'assets/layouts/layout3/img/logo-default.jpg' %}" alt="logo" class="logo-default">
+                                    <a href="/">
+                                        <h1>Mr. Mars</h1>
                                     </a>
                                 </div>
                                 <!-- END LOGO -->
@@ -96,29 +96,6 @@
                                 <!-- DOC: Remove data-hover="dropdown" and data-close-others="true" attributes below to disable the dropdown opening on mouse hover -->
                                 <div class="hor-menu  ">
                                     <ul class="nav navbar-nav">
-                                        <li class="menu-dropdown classic-menu-dropdown">
-                                            <a href="javascript:;"> Dashboard
-                                                <span class="arrow"></span>
-                                            </a>
-                                            <ul class="dropdown-menu pull-left">
-                                                <li class=" active">
-                                                    <a href="index.html" class="nav-link  active">
-                                                        <i class="icon-bar-chart"></i> Default Dashboard
-                                                        <span class="badge badge-success">1</span>
-                                                    </a>
-                                                </li>
-                                                <li class=" ">
-                                                    <a href="dashboard_2.html" class="nav-link  ">
-                                                        <i class="icon-bulb"></i> Dashboard 2 </a>
-                                                </li>
-                                                <li class=" ">
-                                                    <a href="dashboard_3.html" class="nav-link  ">
-                                                        <i class="icon-graph"></i> Dashboard 3
-                                                        <span class="badge badge-danger">3</span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>
                                         <li class="">
                                             <a href="{% url 'movie:test' %}"> Home
                                                 <span class="arrow"></span>
@@ -126,6 +103,16 @@
                                         </li>
                                         <li class="">
                                             <a href="{% url 'movie:movieList' %}"> Movies
+                                                <span class="arrow"></span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="{% url 'sentiment:demo' %}"> Sentimen Demo
+                                                <span class="arrow"></span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="{% url 'movie:demo' %}"> Recommendation Demo
                                                 <span class="arrow"></span>
                                             </a>
                                         </li>
