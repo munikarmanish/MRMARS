@@ -35,13 +35,9 @@ class Genre(Timestampable):
         return self.title
 
 
-def uploadPhoto(instance, filename):
-    return "%s/%s/%s" % ('movie', instance.title, filename)
-
-
 class Movie(Timestampable):
-    title = models.CharField(max_length=255)
-    photo = models.ImageField(upload_to=uploadPhoto)
+    title = models.TextField()
+    photo = models.ImageField()
     description = RichTextField()
     slug = models.SlugField(unique=True)
     released_date = models.DateField()
