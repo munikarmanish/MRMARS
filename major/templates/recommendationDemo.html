@@ -1,0 +1,17 @@
+{% extends 'layouts/base.html' %}
+
+{% block head_title %}
+{% endblock %}
+{% block page_title %}
+{% endblock %}
+{% block content %}
+{%for original in originals%}
+{{original}}<br/>
+{% endfor %}
+{%for prediction in predictions%}
+{{prediction}}<br/>
+{% endfor %}
+{% endblock %}
+
+{% block extra_js%}
+{% endblock %}

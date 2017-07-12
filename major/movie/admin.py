@@ -5,7 +5,7 @@ from .models import *
 
 admin.site.register(Movie)
 admin.site.register(Review)
-admin.site.register(Recommendation)
+admin.site.register(Prediction)
 admin.site.register(Genre)
 admin.site.register(Data)
 

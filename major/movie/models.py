@@ -49,7 +49,7 @@ class Movie(Timestampable):
     rating = models.FloatField(default=0)
 
     class Meta:
-        ordering = ["slug",]
+        ordering = ["slug", ]
 
     def get_absolute_url(self):
         return reverse("movie:movieDetail", kwargs={"slug": self.slug})
@@ -73,16 +73,17 @@ class Review(Timestampable):
         return self.user.username + self.movie.title
 
 
-class Recommendation(Timestampable):
+class Prediction(Timestampable):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    score = models.FloatField(default=0)
+    predicted = models.FloatField(default=0)
+    is_already_rated = models.BooleanField(default=False)
 
     def __str__(self):
         return self.user.username + self.movie.title
 
     class Meta:
-        ordering = ['-score']
+        unique_together = (("user", "movie"),)
 
 
 class Data(models.Model):
