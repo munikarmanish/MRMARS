@@ -39,7 +39,7 @@ class Movie(Timestampable):
     title = models.CharField(max_length=1025)
     photo = models.ImageField()
     description = RichTextField()
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, max_length=1025)
     released_date = models.DateField()
     genre = models.ManyToManyField(Genre)
     rating = models.FloatField(default=0)

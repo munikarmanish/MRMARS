@@ -21,7 +21,6 @@ with open('movie_ids.txt', encoding="latin1") as fid:
     for line in fid:
         movieName = line.split(' ', 1)[1].strip()
         movieList.append(movieName)
-print(len(movieList))
 description = """
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi magna neque, mollis id tellus ut, finibus rhoncus metus. Quisque id lectus auctor dolor pretium porttitor ut quis metus. Proin bibendum tincidunt scelerisque. Proin eu viverra mauris. Suspendisse potenti. Vestibulum fringilla lacus nec facilisis vulputate. Donec consectetur aliquam molestie. Curabitur fermentum enim ut euismod vestibulum. Ut aliquet scelerisque turpis, sit amet rutrum lacus iaculis vitae. Vestibulum dui metus, pulvinar porttitor neque eu, hendrerit gravida metus. Maecenas ultrices semper est ac blandit. Nunc mollis et massa malesuada rhoncus. Nunc pretium feugiat dolor eu lobortis. Donec tincidunt vulputate massa, ac tincidunt enim vehicula nec. Aenean ultricies est quis massa volutpat tincidunt. Etiam sollicitudin volutpat dui in facilisis.</p>
 
@@ -36,9 +35,10 @@ description = """
 
 for i in range(num_movies):
     title = movieList[i]
-    released_date = date(int(movieList[i][-5:-1]), randint(1, 12), randint(1, 28))
+    released_date = date(
+        int(movieList[i][-5:-1]), randint(1, 12), randint(1, 28))
     try:
-        # print('Creating movie {0}.'.format(title))
+        print('Creating movie {0}.'.format(title))
         movie = Movie()
         movie.title = title
         movie.slug = slugify(title) + '-' + str(i + 1)
@@ -46,9 +46,9 @@ for i in range(num_movies):
         movie.description = description
         f = File(open(os.path.join(os.path.dirname(settings.BASE_DIR),
                                    "root", "media_cdn", "500x500.png"), 'rb'))
-        movie.photo.save('{0}.png'.format(i+1), f)
+        movie.photo.save('{0}.png'.format(i + 1), f)
         movie.save()
-        # print('Movie {0} successfully created.'.format(title))
+        print('Movie {0} successfully created.'.format(title))
 
     except:
         print(released_date)
