@@ -36,7 +36,7 @@ class Genre(Timestampable):
 
 
 class Movie(Timestampable):
-    title = models.TextField()
+    title = models.CharField(max_length=1025)
     photo = models.ImageField()
     description = RichTextField()
     slug = models.SlugField(unique=True)
