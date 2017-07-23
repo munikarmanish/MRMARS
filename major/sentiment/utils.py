@@ -42,15 +42,15 @@ def rating_from_sentiment(sentiment):
 
 def sentences(review):
     result = CoreNLP.annotate(
-        review.lower(), properties={'annotators': 'sentiment', 'outputFormat': 'json'})
+        review, properties={'annotators': 'sentiment', 'outputFormat': 'json'})
     return result['sentences']
 
 
 def sentiments(review):
-    sentiment_list = [s['sentiment'] for s in sentences(review.lower())]
+    sentiment_list = [s['sentiment'] for s in sentences(review)]
     return sentiment_list
 
 
 def rating(review):
-    sentiment_list = sentiments(review.lower())
+    sentiment_list = sentiments(review)
     return np.mean([rating_from_sentiment(s) for s in sentiment_list])
