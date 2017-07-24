@@ -202,42 +202,13 @@ class MovieDetailView(FormView):
 
 class RecommendationDemo(View):
     def get(self, request, *args, **kwargs):
-        originals, predictions = recommender.demoRecommend()
+        try:
+            user_id = int(request.GET.get('user_id'))
+        except:
+            user_id = 0
+        originals, predictions = recommender.demoRecommend(user_id)
         context = {
             'originals': originals,
             'predictions': predictions,
-
         }
         return render(request, 'recommendationDemo.html', context)
-
-        # class ProductCreateView(SuccessMessageMixin, CreateView):
-        #     model = Product
-        #     template_name = 'website/productCreate.html'
-        #     form_class = ProductForm
-        #     success_url = reverse_lazy("website:productList")
-        #     success_message = "Product Successfully Added"
-
-        # class ProductUpdateView(SuccessMessageMixin, UpdateView):
-        #     model = Product
-        #     template_name = 'website/productUpdate.html'
-        #     form_class = ProductForm
-        #     success_url = reverse_lazy("website:productList")
-        #     success_message = "Product Successfully Updated"
-
-        # class ProductDetailView(DetailView):
-        #     model = Product
-        #     template_name = 'website/productDetail.html'
-
-        # class ProductListView(ListView):
-        #     model = Product
-        #     template_name = 'website/productList.html'
-        #     context_object_name = 'products'
-
-        #     def get_queryset(self):
-        #         return Product.objects.filter(deleted_at=None)
-
-        # class ProductDeleteView(SuccessMessageMixin, DeleteView):
-        #     model = Product
-        #     template_name = 'website/delete.html'
-        #     success_url = reverse_lazy("website:productList")
-        #     success_message = "Product Successfully Deleted"

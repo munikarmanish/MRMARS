@@ -1,15 +1,11 @@
 # from numpy import *
-from scipy.io import loadmat
 from scipy.optimize import minimize
-from json import loads
-from .models import Movie, Data
+from .models import Movie, Review
 from django.contrib.auth.models import User
 from django.conf import settings
 import os
-from .tests import RecommenderTest
+import logging
 
-
-import os
 import pickle
 
 import numpy as np
@@ -86,245 +82,95 @@ def load_movie_list(filename=os.path.join(settings.BASE_DIR, "movie", "data", "m
     with open(filename, 'r') as f:
         return [l.split(' ', 1)[1].strip() for l in f]
 
-# def cofiCostFunc(params, Y, R, num_users, num_movies, num_features, lambda_):
-#     # COFICOSTFUNC Collaborative filtering cost function
-#     #   J, grad = COFICOSTFUNC(params, Y, R, num_users, num_movies, num_features, lambda_)
-#     #   returns the cost and gradient for the collaborative filtering problem.
-#     #
 
-#     # Unfold the U and W matrices from params
-#     X = reshape(params[:num_movies * num_features],
-#                 (num_movies, num_features), order='F')
-#     Theta = reshape(params[num_movies * num_features:],
-#                     (num_users, num_features), order='F')
+def demoRecommend(user_id=0):
+    movies = load_movie_list()
 
-#     # You need to return the following values correctly
-#     J = 0
-#     X_grad = zeros(shape(X))
-#     Theta_grad = zeros(shape(Theta))
+    # Load the dataset
+    y_file = os.path.join(settings.BASE_DIR, "movie", "data", "Y.bin")
+    r_file = os.path.join(settings.BASE_DIR, "movie", "data", "R.bin")
+    R = load_from_file(r_file)
+    Y = load_from_file(y_file).astype(float)
 
-#     # ====================== YOUR CODE HERE ======================
-#     # Instructions: Compute the cost function and gradient for collaborative
-#     #               filtering. Concretely, you should first implement the cost
-#     #               function (without regularization) and make sure it is
-#     #               matches our costs. After that, you should implement the
-#     #               gradient and use the checkCostFunction routine to check
-#     #               that the gradient is correct. Finally, you should implement
-#     #               regularization.
-#     #
-#     # Notes: X - num_movies  x num_features matrix of movie features
-#     #        Theta - num_users  x num_features matrix of user features
-#     #        Y - num_movies x num_users matrix of user ratings of movies
-#     #        R - num_movies x num_users matrix, where R(i, j) = 1 if the
-#     #            i-th movie was rated by the j-th user
-#     #
-#     # You should set the following variables correctly:
-#     #
-#     #        X_grad - num_movies x num_features matrix, containing the
-#     #                 partial derivatives w.r.t. to each element of X
-#     #        Theta_grad - num_users x num_features matrix, containing the
-#     #                     partial derivatives w.r.t. to each element of Theta
-#     #
-#     J_temp = (dot(X, Theta.T) - Y)**2
-#     J = (sum(J_temp[R == 1]) + lambda_ *
-#          sum(sum(Theta**2)) + lambda_ * sum(sum(X**2))) / 2
-#     # =============================================================
+    model_filename = os.path.join(settings.BASE_DIR, 'movie/data/recommender.pickle')
+    if os.path.isfile(model_filename):
+        model = Recommender.load(model_filename)
+    else:
+        my_ratings = np.zeros(len(movies))
+        my_ratings[1 - 1] = 4
+        my_ratings[98 - 1] = 2
+        my_ratings[7 - 1] = 3
+        my_ratings[12 - 1] = 5
+        my_ratings[54 - 1] = 4
+        my_ratings[64 - 1] = 5
+        my_ratings[66 - 1] = 3
+        my_ratings[69 - 1] = 5
+        my_ratings[183 - 1] = 4
+        my_ratings[226 - 1] = 5
+        my_ratings[355 - 1] = 5
+        Y = np.column_stack((my_ratings, Y))
+        R = np.column_stack((my_ratings != 0, R))
+        model = Recommender(Y=Y, R=R, reg=10, num_features=10)
+        model.learn(maxiter=200, verbose=True, normalize=False, tol=1e-1)
+        model.save(model_filename)
 
-#     X_grad = dot(((dot(X, Theta.T) - Y) * R), Theta) + lambda_ * X
-#     Theta_grad = dot(((dot(X, Theta.T) - Y) * R).T, X) + lambda_ * Theta
+    rated_ids = [i for i in range(Y.shape[0]) if R[i, user_id] == 1]
+    logging.info("USER {} HAS RATED:".format(user_id))
+    rated = []
+    for i in rated_ids:
+        # logging.info("   RATED <{:.1f}> FOR '{}'".format(
+        #     Y[i, user_id], movies[i]))
+        rated.append("   Rated {:.1f} for '{}'".format(
+            Y[i, user_id], movies[i]))
+    recommendations = model.recommendations(user_id=user_id)
+    logging.info("RECOMMENDATIONS FOR USER {}:".format(user_id))
+    result = []
 
-#     grad = hstack((X_grad.ravel('F'), Theta_grad.ravel('F')))
-#     return J, grad
+    max_rating = np.max([r for (i,r) in recommendations])
+    if max_rating >= 5.0:
+        recommendations = [(i, r*4.99/max_rating) for (i,r) in recommendations]
+    for (i, rating) in recommendations:
+        # logging.info("   <{:.1f}> {}".format(rating, movies[i]))
+        result.append("   [{:.1f}] {}".format(rating * 4.99 / max_rating, movies[i]))
 
-
-# def loadMovieList():
-#     # GETMOVIELIST reads the fixed movie list in movie_ids.txt and returns a
-#     # list of the titles
-#     #   movieList = GETMOVIELIST() reads the fixed movie list in movie_ids.txt
-#     #   and returns a list of the titles in movieList.
-#     movieList = []
-#     movies = Movie.objects.all()
-#     for movie in movies:
-#         movieList.append(movie.slug)
-#     return movieList
-
-# # returns list of all user in ascending order of name
-
-
-# def loadUserList():
-#     userList = []
-#     users = User.objects.all().order_by('username')
-#     for user in users:
-#         userList.append(user.username)
-#     return userList
-
-
-# def loadDatas():
-#     movieList = loadMovieList()
-#     userList = loadUserList()
-#     data = Data.objects.all().first()
-#     data_dict = loads(data.data)
-#     m, n = len(movieList), len(userList)
-#     s = (m, n)
-#     Y, R = zeros(s), zeros(s)
-#     for user, value in data_dict.items():
-#         for movie, rating in value.items():
-#             x = movieList.index(movie)
-#             y = userList.index(user)
-#             Y[x, y] = rating
-#             R[x, y] = 1
-#     return movieList, userList, Y, R
-
-
-# def normalizeRatings(Y, R):
-#     # NORMALIZERATINGS Preprocess data by subtracting mean rating for every
-#     # movie (every row)
-#     #   Ynorm, Ymean = NORMALIZERATINGS(Y, R) normalized Y so that each movie
-#     #   has a rating of 0 on average, and returns the mean rating in Ymean.
-#     #
-
-#     m, n = shape(Y)
-#     Ymean = zeros(m)
-#     Ynorm = zeros(shape(Y))
-#     for i in range(m):
-#         idx = where(R[i, :] == 1)
-#         Ymean[i] = mean(Y[i, idx])
-#         Ynorm[i, idx] = Y[i, idx] - Ymean[i]
-
-#     return Ynorm, Ymean
-
-
-# # ===== HELPERS =====
-
-
-# def serialize(*args):
-#     return hstack(a.ravel('F') for a in args)
-
-
-def demoRecommend():
-    # movieList = []
-
-    # # Read the fixed movieulary list
-    # with open(os.path.join(settings.BASE_DIR, "movie_ids.txt")) as fid:
-    #     for line in fid:
-    #         movieName = line.split(' ', 1)[1].strip()
-    #         movieList.append(movieName)
-
-    # #  Initialize my ratings
-    # my_ratings = zeros(len(movieList))
-
-    # # Check the file movie_idx.txt for id of each movie in our dataset
-    # # For example, Toy Story (1995) has ID 1, so to rate it "4", you can set
-    # my_ratings[1 - 1] = 4
-
-    # # Or suppose did not enjoy Silence of the Lambs (1991), you can set
-    # my_ratings[98 - 1] = 2
-
-    # # We have selected a few movies we liked / did not like and the ratings we
-    # # gave are as follows:
-    # my_ratings[7 - 1] = 3
-    # my_ratings[12 - 1] = 5
-    # my_ratings[54 - 1] = 4
-    # my_ratings[64 - 1] = 5
-    # my_ratings[66 - 1] = 3
-    # my_ratings[69 - 1] = 5
-    # my_ratings[183 - 1] = 4
-    # my_ratings[226 - 1] = 5
-    # my_ratings[355 - 1] = 5
-    # ex8_movies = loadmat(os.path.join(settings.BASE_DIR, "ex8_movies.mat"))
-    # Y = ex8_movies['Y']
-    # R = ex8_movies['R']
-
-    # #  Normalize Ratings
-    # Ynorm, Ymean = normalizeRatings(Y, R)
-
-    # #  Useful Values
-    # num_users = size(Y, 1)
-    # num_movies = size(Y, 0)
-    # num_features = 10
-
-    # # Set Initial Parameters (Theta, X)
-    # X = random.randn(num_movies, num_features)
-    # Theta = random.randn(num_users, num_features)
-
-    # initial_parameters = serialize(X, Theta)
-
-    # # Set Regularization
-    # lambda_ = 10
-    # extra_args = (Ynorm, R, num_users, num_movies, num_features, lambda_)
-
-    # res = minimize(cofiCostFunc, initial_parameters, extra_args, method='CG',
-    #                jac=True, options={'maxiter': 100})
-    # theta = res.x
-    # cost = res.fun
-
-    # # Unfold the returned theta back into U and W
-    # X = reshape(theta[:num_movies * num_features],
-    #             (num_movies, num_features), order='F')
-    # Theta = reshape(theta[num_movies * num_features:],
-    #                 (num_users, num_features), order='F')
-
-    # p = dot(X, Theta.T)
-    # nr = sum(R, 1)
-    # my_predictions = p[:, 0]
-
-    # ix = argsort(my_predictions)
-    # print(ix)s
-    # print(my_predictions[ix[-1]])
-    # prediction = []
-    # for j in ix[:-11:-1]:
-    #     prediction.append('Predicting rating %.1f for movie %s' %
-    #                       (my_predictions[j], movieList[j]))
-
-    # original = []
-    # for rating, name in zip(my_ratings, movieList):
-    #     if rating > 0:
-    #         original.append('Rated %d for %s' % (rating, name))
-    original, prediction = RecommenderTest().test_recommendation()
-    return original, prediction
+    return rated, result
 
 
 def recommend(username):
+    movies = Movie.objects.filter(deleted_at=None).order_by('title')
+    users = User.objects.all().order_by('username')
+    movieList, userList = [], []
+    for movie in movies:
+        movieList.append(movie.slug)
 
-    movieList, userList, Y, R = loadDatas()
+    for user in users:
+        userList.append(user.username)
+    print(movieList, userList)
+    Y = np.zeros((len(movieList), len(userList)), dtype=float)
+    R = np.zeros((len(movieList), len(userList)))
+    reviews = Review.objects.filter(deleted_at=None)
+    for review in reviews:
+        x = movieList.index(review.movie.slug)
+        y = userList.index(review.user.username)
+        print(x, y)
+        Y[x, y] = review.rating
+        R[x, y] = 1
+    print("end")
+    print(Y, Y[1,1], type(Y[1,1]))
+    model = Recommender(Y=Y, R=R, reg=10, num_features=10)
+    model.learn(maxiter=200, verbose=True, normalize=False, tol=1e-1)
+    user_id = 1
+    rated_ids = [i for i in range(Y.shape[0]) if R[i, user_id] == 1]
+    logging.info("USER {} HAS RATED:".format(user_id))
+    rated = []
+    for i in rated_ids:
+        rated.append("   RATED <{:.1f}> FOR '{}'".format(
+            Y[i, user_id], movieList[i]))
+    recommendations = model.recommendations(user_id=user_id)
+    logging.info("RECOMMENDATIONS:")
+    result = []
+    for (i, rating) in recommendations:
+        result.append("   <{:.1f}> {}".format(rating, movieList[i]))
 
-    #  Normalize Ratings
-    Ynorm, Ymean = normalizeRatings(Y, R)
-
-    #  Useful Values
-    num_users = size(Y, 1)
-    num_movies = size(Y, 0)
-    num_features = 10
-
-    # Set Initial Parameters (Theta, X)
-    X = random.randn(num_movies, num_features)
-    Theta = random.randn(num_users, num_features)
-
-    initial_parameters = serialize(X, Theta)
-
-    # Set Regularization
-    lambda_ = 10
-    extra_args = (Y, R, num_users, num_movies, num_features, lambda_)
-    res = minimize(cofiCostFunc, initial_parameters, extra_args, method='CG',
-                   jac=True, options={'maxiter': 100})
-    theta = res.x
-
-    # Unfold the returned theta back into U and W
-    X = reshape(theta[:num_movies * num_features],
-                (num_movies, num_features), order='F')
-    Theta = reshape(theta[num_movies * num_features:],
-                    (num_users, num_features), order='F')
-
-    p = dot(X, Theta.T)
-    index = userList.index(username)
-    my_predictions = p[:, index]
-
-    ix = argsort(my_predictions)
-    prediction = []
-    prediction_dict = {}
-    for j in ix[:-11:-1]:
-        prediction.append('Predicting rating %.1f for movie %s' %
-                          (my_predictions[j], movieList[j]))
-        prediction_dict[movieList[j]] = my_predictions[j]
-
-    return prediction, prediction_dict
+    return rated, result
+    # return [],[]

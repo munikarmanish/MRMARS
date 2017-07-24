@@ -5,13 +5,22 @@
 {% block page_title %}
 {% endblock %}
 {% block content %}
+
+<p>Ratings given by user...</p>
+<ul>
 {%for original in originals%}
-{{original}}<br/>
+  <li>{{original}}</li>
 {% endfor %}
+</ul>
+
+<p>Recommendations for the user...</p>
+<ul>
 {%for prediction in predictions%}
-{{prediction}}<br/>
+  <li>{{prediction}}</li>
 {% endfor %}
-{% endblock %}
+</ul>
+
+{% endblock content %}
 
 {% block extra_js%}
 {% endblock %}
