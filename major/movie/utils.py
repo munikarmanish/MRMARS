@@ -83,44 +83,55 @@ def load_movie_list(filename=os.path.join(settings.BASE_DIR, "movie", "data", "m
         return [l.split(' ', 1)[1].strip() for l in f]
 
 
-def demoRecommend():
+def demoRecommend(user_id=0):
     movies = load_movie_list()
-    my_ratings = np.zeros(len(movies))
-    my_ratings[1 - 1] = 4
-    my_ratings[98 - 1] = 2
-    my_ratings[7 - 1] = 3
-    my_ratings[12 - 1] = 5
-    my_ratings[54 - 1] = 4
-    my_ratings[64 - 1] = 5
-    my_ratings[66 - 1] = 3
-    my_ratings[69 - 1] = 5
-    my_ratings[183 - 1] = 4
-    my_ratings[226 - 1] = 5
-    my_ratings[355 - 1] = 5
+
+    # Load the dataset
     y_file = os.path.join(settings.BASE_DIR, "movie", "data", "Y.bin")
     r_file = os.path.join(settings.BASE_DIR, "movie", "data", "R.bin")
     R = load_from_file(r_file)
     Y = load_from_file(y_file).astype(float)
-    Y = np.column_stack((my_ratings, Y))
-    R = np.column_stack((my_ratings != 0, R))
 
-    model = Recommender(Y=Y, R=R, reg=10, num_features=10)
-    model.learn(maxiter=200, verbose=True, normalize=False, tol=1e-1)
-    user_id = 0
+    model_filename = os.path.join(settings.BASE_DIR, 'movie/data/recommender.pickle')
+    if os.path.isfile(model_filename):
+        model = Recommender.load(model_filename)
+    else:
+        my_ratings = np.zeros(len(movies))
+        my_ratings[1 - 1] = 4
+        my_ratings[98 - 1] = 2
+        my_ratings[7 - 1] = 3
+        my_ratings[12 - 1] = 5
+        my_ratings[54 - 1] = 4
+        my_ratings[64 - 1] = 5
+        my_ratings[66 - 1] = 3
+        my_ratings[69 - 1] = 5
+        my_ratings[183 - 1] = 4
+        my_ratings[226 - 1] = 5
+        my_ratings[355 - 1] = 5
+        Y = np.column_stack((my_ratings, Y))
+        R = np.column_stack((my_ratings != 0, R))
+        model = Recommender(Y=Y, R=R, reg=10, num_features=10)
+        model.learn(maxiter=200, verbose=True, normalize=False, tol=1e-1)
+        model.save(model_filename)
+
     rated_ids = [i for i in range(Y.shape[0]) if R[i, user_id] == 1]
     logging.info("USER {} HAS RATED:".format(user_id))
     rated = []
     for i in rated_ids:
         # logging.info("   RATED <{:.1f}> FOR '{}'".format(
         #     Y[i, user_id], movies[i]))
-        rated.append("   RATED <{:.1f}> FOR '{}'".format(
+        rated.append("   Rated {:.1f} for '{}'".format(
             Y[i, user_id], movies[i]))
     recommendations = model.recommendations(user_id=user_id)
-    logging.info("RECOMMENDATIONS:")
+    logging.info("RECOMMENDATIONS FOR USER {}:".format(user_id))
     result = []
+
+    max_rating = np.max([r for (i,r) in recommendations])
+    if max_rating >= 5.0:
+        recommendations = [(i, r*4.99/max_rating) for (i,r) in recommendations]
     for (i, rating) in recommendations:
         # logging.info("   <{:.1f}> {}".format(rating, movies[i]))
-        result.append("   <{:.1f}> {}".format(rating, movies[i]))
+        result.append("   [{:.1f}] {}".format(rating * 4.99 / max_rating, movies[i]))
 
     return rated, result
 

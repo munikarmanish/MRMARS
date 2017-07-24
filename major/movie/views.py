@@ -202,10 +202,13 @@ class MovieDetailView(FormView):
 
 class RecommendationDemo(View):
     def get(self, request, *args, **kwargs):
-        originals, predictions = recommender.recommend('aakash')
+        try:
+            user_id = int(request.GET.get('user_id'))
+        except:
+            user_id = 0
+        originals, predictions = recommender.demoRecommend(user_id)
         context = {
             'originals': originals,
             'predictions': predictions,
-
         }
         return render(request, 'recommendationDemo.html', context)

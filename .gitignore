@@ -4,3 +4,8 @@ root/
 *.sublime-project
 *.sublime-workspace
 
+# Recommender data file
+major/movie/data/recommender.pickle
+
+# VIM temporary files
+**.swp

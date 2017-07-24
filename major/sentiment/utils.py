@@ -2,6 +2,8 @@ import numpy as np
 from django.conf import settings
 from pycorenlp import StanfordCoreNLP
 
+from . import tree as tr
+
 try:
     CORENLP_SERVER = settings.CORENLP_SERVER
 except AttributeError:
@@ -54,3 +56,19 @@ def sentiments(review):
 def rating(review):
     sentiment_list = sentiments(review.lower())
     return np.mean([rating_from_sentiment(s) for s in sentiment_list])
+
+
+def predict_tree(tree):
+    if tr.isleaf(tree):
+        tree.set_label(str(int(rating(tree[0]))))
+        return tree
+    else:
+        tree.set_label(str(int(rating(' '.join(tree.leaves())))))
+        predict_tree(tree[0])
+        predict_tree(tree[1])
+        return tree
+
+def f(text):
+    tree = tr.parse(text)[0]
+    out = predict_tree(tree)
+    out.pretty_print()

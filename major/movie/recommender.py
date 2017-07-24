@@ -93,11 +93,11 @@ class Recommender:
         return [(i, user_predictions[i]) for i in recommended_ids]
 
     def save(self, filename):
-        import utils
+        from . import utils
         logging.info("Saving recommender model to '{}'".format(filename))
         utils.save_to_file(self, filename)
 
     def load(filename):
-        import utils
+        from . import utils
         logging.info("Loading recommender model from '{}'".format(filename))
         return utils.load_from_file(filename)
