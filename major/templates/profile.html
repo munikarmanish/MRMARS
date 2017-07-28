@@ -6,6 +6,9 @@
 <h1>Profile</h1>
 {% endblock %}
 {% block content %}
+{%for original in originals%}
+{{original}}<br/>
+{% endfor %}
 {%for prediction in predictions%}
 {{prediction}}<br/>
 {% endfor %}

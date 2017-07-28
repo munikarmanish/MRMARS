@@ -9,7 +9,7 @@ class Recommender:
 
     DEFAULT_NUM_FEATURES = 10
     DEFAULT_REGULARIZATION = 1
-    DEFAULT_MAX_ITER = 100
+    DEFAULT_MAX_ITER = 1000
 
     def __init__(self, num_features=DEFAULT_NUM_FEATURES, normalized=False,
                  reg=DEFAULT_REGULARIZATION, Y=None, R=None):

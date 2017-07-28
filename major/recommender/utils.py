@@ -125,7 +125,7 @@ def demoRecommend():
     return rated, result
 
 
-def recommend(username):
+def recommend(userPK):
     # movies = Movie.objects.filter(deleted_at=None).order_by('title')
     # users = User.objects.all().order_by('username')
     # movieList, userList = [], []
@@ -153,7 +153,12 @@ def recommend(username):
     userList = load_from_file(filename)
     filename = "bin/recommender.bin"
     model = Recommender.load(filename)
-    user_id = 1
+
+    if userPK not in userList:
+        return [], []
+    else:
+        user_id = userPK
+
     rated_ids = [i for i in range(model.Y.shape[0]) if model.R[
         i, user_id] == 1]
     logging.info("USER {} HAS RATED:".format(user_id))

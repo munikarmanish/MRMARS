@@ -101,9 +101,10 @@ class ProfileView(View):
     def get(self, request, *args, **kwargs):
         userSlug = kwargs['slug']
         user = User.objects.get(username=userSlug)
-        predictions, predictions_dict = recommender.recommend(user.username)
+        originals, predictions = recommender.recommend(user.pk)
         context = {
             'user': user,
+            'originals': originals,
             'predictions': predictions,
         }
         return render(request, 'profile.html', context)
@@ -198,5 +199,3 @@ class MovieDetailView(FormView):
         review.rating = sentiment.rating(review.summary)
         review.save()
         return HttpResponseRedirect(self.movie.get_absolute_url())
-
-
