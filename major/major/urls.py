@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'', include('movie.urls', namespace='movie')),
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     url(r'^sentiment/', include('sentiment.urls', namespace='sentiment')),
+    url(r'^recommender/', include('recommender.urls', namespace='recommender')),
 ]
 
 

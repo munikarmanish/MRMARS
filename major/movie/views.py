@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 
 from .forms import *
 from .models import *
-from movie import utils as recommender
+from recommender import utils as recommender
 from sentiment import utils as sentiment
 
 
@@ -200,12 +200,3 @@ class MovieDetailView(FormView):
         return HttpResponseRedirect(self.movie.get_absolute_url())
 
 
-class RecommendationDemo(View):
-    def get(self, request, *args, **kwargs):
-        originals, predictions = recommender.recommend('aakash')
-        context = {
-            'originals': originals,
-            'predictions': predictions,
-
-        }
-        return render(request, 'recommendationDemo.html', context)
