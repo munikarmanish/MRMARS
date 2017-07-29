@@ -1,5 +1,6 @@
 import numpy as np
 from django.conf import settings
+
 from pycorenlp import StanfordCoreNLP
 
 from . import tree as tr
@@ -68,7 +69,11 @@ def predict_tree(tree):
         predict_tree(tree[1])
         return tree
 
-def f(text):
+
+def get_predicted_tree(text):
     tree = tr.parse(text)[0]
-    out = predict_tree(tree)
-    out.pretty_print()
+    return predict_tree(tree)
+
+
+def display_predicted_tree(text):
+    get_predicted_tree(text).pretty_print()

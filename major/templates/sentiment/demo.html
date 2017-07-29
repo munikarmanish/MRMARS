@@ -17,8 +17,13 @@
         {% csrf_token %}
           {% if rating %}
             <div class="form-actions top">
-            Predicted rating = {{ rating|floatformat:3 }}<br>
+            Predicted rating = {{ rating|floatformat:1 }}<br>
             Sentiment Class = {{sentimentClass}}
+            </div>
+            <div class="tree">
+              <svg width="100%" height="500px">
+                {{tree_svg|safe}}
+              </svg>
             </div>
           {% endif %}
             <div class="form-body">

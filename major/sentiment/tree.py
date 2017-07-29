@@ -12,7 +12,7 @@ WORD_MAP_FILENAME = 'models/word_map.pickle'
 
 def parse(text):
     parser = CoreNLPParser("http://localhost:9000")
-    result = parser.raw_parse(text.lower())
+    result = parser.raw_parse(text)
     trees = [tree for tree in result]
     for tree in trees:
         tree.chomsky_normal_form()
@@ -41,7 +41,7 @@ def traverse(tree, f=print, args=None, leaves=False):
 def build_word_map():
     print("Building word map...")
     with open("trees/train.txt", "r") as f:
-        trees = [ParentedTree.fromstring(line.lower()) for line in f]
+        trees = [ParentedTree.fromstring(line) for line in f]
 
     print("Counting words...")
     words = defaultdict(int)
@@ -61,14 +61,14 @@ def load_word_map():
         return build_word_map()
     print("Loading word map...")
     with open(WORD_MAP_FILENAME, 'rb') as f:
-        return pickle.load(WORD_MAP_FILENAME)
+        return pickle.load(f)
 
 
 def load_trees(dataset='train'):
     filename = "trees/{}.txt".format(dataset)
     with open(filename, 'r') as f:
         print("Reading '{}'...".format(filename))
-        trees = [ParentedTree.fromstring(line.lower()) for line in f]
+        trees = [ParentedTree.fromstring(line) for line in f]
     return trees
 
 
