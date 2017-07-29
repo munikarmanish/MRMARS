@@ -101,11 +101,13 @@ class ProfileView(View):
     def get(self, request, *args, **kwargs):
         userSlug = kwargs['slug']
         user = User.objects.get(username=userSlug)
-        originals, predictions = recommender.recommend(user.pk)
+        reviews, predictions = recommender.recommend(user.pk)
+        movies = Movie.objects.all().order_by('-rating')[:12]
         context = {
             'user': user,
-            'originals': originals,
+            'reviews': reviews,
             'predictions': predictions,
+            'movies': movies,
         }
         return render(request, 'profile.html', context)
 
@@ -185,6 +187,18 @@ class MovieDetailView(FormView):
 
         context['movie'] = self.movie
         context['reviews'] = Review.objects.filter(movie=self.movie)
+        similarMoviesList = []
+        for genre in self.movie.genre.all():
+            movies = Movie.objects.filter(genre=genre)
+            for movie in movies:
+                if movie.rating == 5:
+                    similarMoviesList.append(movie)
+        similarMoviesId = [movie.id for movie in similarMoviesList]
+        similarMovies = Movie.objects.filter(
+            id__in=similarMoviesId).order_by('-rating')[:4]
+        context['similarMovies'] = similarMovies
+        print(similarMovies)
+
         return context
 
     def form_valid(self, form):

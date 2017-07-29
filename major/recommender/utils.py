@@ -132,13 +132,13 @@ def recommend(userPK):
     filename = "bin/recommender.bin"
     model = Recommender.load(filename)
 
-    if userPK not in userList:
-        return [], []
+    user = User.objects.get(pk=userPK)
+    reviews = Review.objects.filter(user=user).order_by('-rating')
+    if userPK > 943:
+        return reviews, []
     else:
         user_id = userPK
 
-    user = User.objects.get(pk=user_id)
-    reviews = Review.objects.filter(user=user).order_by('-rating')
     recommendations = model.recommendations(user_id=user_id)
     logging.info("RECOMMENDATIONS:")
     result = []
