@@ -103,6 +103,7 @@ class ProfileView(View):
         user = User.objects.get(username=userSlug)
         reviews, predictions = recommender.recommend(user.pk)
         movies = Movie.objects.all().order_by('-rating')[:12]
+        print(len(reviews))
         context = {
             'user': user,
             'reviews': reviews,
