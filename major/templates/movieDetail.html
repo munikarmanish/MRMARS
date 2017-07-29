@@ -4,7 +4,10 @@
 {% endblock %}
 {% block extra_head %}
 <link href="{% static 'assets/pages/css/blog.min.css' %}" rel="stylesheet" type="text/css" />
-{% endblock%}
+<style type="text/css">
+  .grid-item { width: 25% }
+</style>
+{% endblock %}
 
 {% block page_title %}
 <h1>Movie Detail</h1>
@@ -30,10 +33,48 @@
                     <ul class="blog-post-tags">
                         {% for genre in movie.genre.all %}
                         <li class="uppercase">
-                            <a href="javascript:;">{{genre}}</a>
+                            <a href="/movie/list/?q={{genre}}">{{genre}}</a>
                         </li>
                         {%endfor%}
                     </ul>
+                </div>
+                <h1>Similar Movies</h1>
+                <div class=" blog-content-1 grid" data-masonry='{ "itemSelector": ".grid-item"}'>
+                    <div class="container">
+                        {% for movie in similarMovies %}
+                        <div class="grid-item" style="padding:15px;">
+                            <div class="blog-post-sm bordered blog-container">
+                                <div class="blog-img-thumb">
+                                    <a href="{% url 'movie:movieDetail' movie.slug %}">
+                                        <img src="{{movie.photo.url}}" />
+                                    </a>
+                                </div>
+                                <div class="blog-post-content">
+                                    <h2 class="blog-title blog-post-title">
+                                        <a href="{% url 'movie:movieDetail' movie.slug %}">{{movie.title}}</a>
+                                    </h2>
+                                    <div class="blog-post-meta">
+                                            <i class="icon-tag font-blue"></i>
+                                            {% for movie in movie.genre.all %}<a href="/movie/list/?q={{movie}}">{{movie}}</a>, {% endfor %}
+                                        </div>
+                                    <span class="movie-stars" data-rating="{{movie.rating}}" data-num-stars="5" ></span>
+                                    <p class="blog-post-desc">
+                                        {% with description=movie.description|safe %}
+                                        {{description|truncatewords:"5"}}
+                                        {% endwith %}
+                                    </p>
+                                    <div class="blog-post-foot">
+                                        <div class="blog-post-meta">
+                                            <i class="icon-calendar font-blue"></i>
+                                            <a href="javascript:;">{{movie.released_date}}</a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
                 <div class="comments">
                 {% if request.user.is_authenticated %}
@@ -91,4 +132,6 @@
     $('.review-stars').stars()
     $('.movie-stars').stars()
 </script>
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+
 {% endblock %}

@@ -1,15 +1,171 @@
 {% extends 'layouts/base.html' %}
-
+{% load staticfiles %}
 {% block head_title %}
 {% endblock %}
 {% block page_title %}
 <h1>Profile</h1>
 {% endblock %}
+{% block extra_head %}
+<link href="{% static 'assets/pages/css/blog.min.css' %}" rel="stylesheet" type="text/css" />
+<style type="text/css">
+  .grid-item { width: 25% }
+</style>
+{% endblock %}
 {% block content %}
-{%for prediction in predictions%}
-{{prediction}}<br/>
-{% endfor %}
+
+ <!-- BEGIN WELLS PORTLET-->
+<div>
+    <div class="portlet light ">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="icon-social-dribbble font-purple"></i>
+                <span class="caption-subject font-purple bold uppercase">Recommended Movies</span>
+            </div>
+    </div>
+    {% if not predictions %}
+        <div class="portlet-body">
+            <div class="well">
+                <h3>Review movies to get predictions</h3>
+            </div>
+        </div>
+    {% endif  %}
+    </div>
+</div>
+
+
+<div class=" blog-content-1 grid" data-masonry='{ "itemSelector": ".grid-item"}'>
+    <div class="container">
+        {% for movie in predictions %}
+        <div class="grid-item" style="padding:15px;">
+            <div class="blog-post-sm bordered blog-container">
+                <div class="blog-img-thumb">
+                    <a href="{% url 'movie:movieDetail' movie.slug %}">
+                        <img src="{{movie.photo.url}}" />
+                    </a>
+                </div>
+                <div class="blog-post-content">
+                    <h2 class="blog-title blog-post-title">
+                        <a href="{% url 'movie:movieDetail' movie.slug %}">{{movie.title}}</a>
+                    </h2>
+                    <div class="blog-post-meta">
+                            <i class="icon-tag font-blue"></i>
+                            {% for movie in movie.genre.all %}<a href="/movie/list/?q={{movie}}">{{movie}}</a>, {% endfor %}
+                        </div>
+                    <span class="movie-stars" data-rating="{{movie.rating}}" data-num-stars="5" ></span>
+                    <p class="blog-post-desc">
+                        {% with description=movie.description|safe %}
+                        {{description|truncatewords:"5"}}
+                        {% endwith %}
+                    </p>
+                    <div class="blog-post-foot">
+                        <div class="blog-post-meta">
+                            <i class="icon-calendar font-blue"></i>
+                            <a href="javascript:;">{{movie.released_date}}</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div>
+    <div class="portlet light ">
+        <div class="portlet-title">
+            <div class="caption">
+                <i class="icon-social-dribbble font-purple"></i>
+                <span class="caption-subject font-purple bold uppercase">Top Rated Movies</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class=" blog-content-1 grid" data-masonry='{ "itemSelector": ".grid-item"}'>
+    <div class="container">
+        {% for movie in movies %}
+        <div class="grid-item" style="padding:15px;">
+            <div class="blog-post-sm bordered blog-container">
+                <div class="blog-img-thumb">
+                    <a href="{% url 'movie:movieDetail' movie.slug %}">
+                        <img src="{{movie.photo.url}}" />
+                    </a>
+                </div>
+                <div class="blog-post-content">
+                    <h2 class="blog-title blog-post-title">
+                        <a href="{% url 'movie:movieDetail' movie.slug %}">{{movie.title}}</a>
+                    </h2>
+                    <div class="blog-post-meta">
+                            <i class="icon-tag font-blue"></i>
+                            {% for movie in movie.genre.all %}<a href="/movie/list/?q={{movie}}">{{movie}}</a>, {% endfor %}
+                        </div>
+                    <span class="movie-stars" data-rating="{{movie.rating}}" data-num-stars="5" ></span>
+                    <p class="blog-post-desc">
+                        {% with description=movie.description|safe %}
+                        {{description|truncatewords:"5"}}
+                        {% endwith %}
+                    </p>
+                    <div class="blog-post-foot">
+                        <div class="blog-post-meta">
+                            <i class="icon-calendar font-blue"></i>
+                            <a href="javascript:;">{{movie.released_date}}</a>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+        <i class="fa fa-gift"></i>Some Reviews</div>
+    </div>
+    <div class="portlet-body form" >
+        <div class="c-comment-list" style="padding:20px;">
+            {% if not reviews %}
+                No reviews yet
+            {% endif %}
+
+            {% for review in reviews %}
+                <div class="media">
+                    <div class="media-body" >
+                        <h4 class="media-heading">
+                        <span class="review-stars" data-rating="{{review.rating}}" data-num-stars="5" ></span> on
+                        <a href="{% url 'movie:movieDetail' review.movie.slug  %}">{{review.movie.title}}</a>
+                        <span class="c-date">{{review.created_at|timesince}}</span> ago
+                        </h4>{{review.summary}}
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js%}
+<script>
+    $.fn.stars = function() {
+        return $(this).each(function() {
+            var rating = $(this).data("rating");
+            if ((rating%1) == 0){
+                rating = Math.floor(rating)
+            }
+
+            var numStars = $(this).data("numStars");
+            var fullStar = new Array(Math.floor(rating + 1)).join('<i class="fa fa-star"></i>');
+            var halfStar = ((rating%1) !== 0) ? '<i class="fa fa-star-half-empty"></i>': '';
+            var noStar = new Array(Math.floor(numStars + 1 - rating)).join('<i class="fa fa-star-o"></i>');
+            $(this).html(fullStar + halfStar + noStar);
+
+        });
+    }
+    $('.review-stars').stars()
+
+    $('.movie-stars').stars()
+</script>
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 {% endblock %}

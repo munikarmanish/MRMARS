@@ -6,7 +6,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>Mr. Mars</title>
+        <title>MRMARS</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="" name="description" />
@@ -14,6 +14,10 @@
         {% include 'layouts/include/head.html'%}
         {% block extra_head %}
         {% endblock %}
+        <style type="text/css">
+        {% block extra_style %}
+        {% endblock %}
+        </style>
         <link rel="shortcut icon" href="favicon.ico" /> </head>
     <!-- END HEAD -->
 
@@ -29,7 +33,7 @@
                                 <!-- BEGIN LOGO -->
                                 <div class="page-logo">
                                     <a href="/">
-                                        <h1>Mr. Mars</h1>
+                                        <h1>MRMARS</h1>
                                     </a>
                                 </div>
                                 <!-- END LOGO -->
@@ -102,12 +106,12 @@
                                             </a>
                                         </li>
                                         <li class="">
-                                            <a href="{% url 'sentiment:demo' %}"> Sentimen Demo
+                                            <a href="{% url 'sentiment:demo' %}"> Sentiment Demo
                                                 <span class="arrow"></span>
                                             </a>
                                         </li>
                                         <li class="">
-                                            <a href="{% url 'movie:demo' %}"> Recommendation Demo
+                                            <a href="{% url 'recommender:demo' %}"> Recommendation Demo
                                                 <span class="arrow"></span>
                                             </a>
                                         </li>

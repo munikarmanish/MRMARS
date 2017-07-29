@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 
 from .forms import *
 from .models import *
-from movie import utils as recommender
+from recommender import utils as recommender
 from sentiment import utils as sentiment
 
 
@@ -101,10 +101,14 @@ class ProfileView(View):
     def get(self, request, *args, **kwargs):
         userSlug = kwargs['slug']
         user = User.objects.get(username=userSlug)
-        predictions, predictions_dict = recommender.recommend(user.username)
+        reviews, predictions = recommender.recommend(user.pk)
+        movies = Movie.objects.all().order_by('-rating')[:12]
+        print(len(reviews))
         context = {
             'user': user,
+            'reviews': reviews,
             'predictions': predictions,
+            'movies': movies,
         }
         return render(request, 'profile.html', context)
 
@@ -184,6 +188,18 @@ class MovieDetailView(FormView):
 
         context['movie'] = self.movie
         context['reviews'] = Review.objects.filter(movie=self.movie)
+        similarMoviesList = []
+        for genre in self.movie.genre.all():
+            movies = Movie.objects.filter(genre=genre)
+            for movie in movies:
+                if movie.rating == 5:
+                    similarMoviesList.append(movie)
+        similarMoviesId = [movie.id for movie in similarMoviesList]
+        similarMovies = Movie.objects.filter(
+            id__in=similarMoviesId).order_by('-rating')[:4]
+        context['similarMovies'] = similarMovies
+        print(similarMovies)
+
         return context
 
     def form_valid(self, form):
@@ -198,17 +214,3 @@ class MovieDetailView(FormView):
         review.rating = sentiment.rating(review.summary)
         review.save()
         return HttpResponseRedirect(self.movie.get_absolute_url())
-
-
-class RecommendationDemo(View):
-    def get(self, request, *args, **kwargs):
-        try:
-            user_id = int(request.GET.get('user_id'))
-        except:
-            user_id = 0
-        originals, predictions = recommender.demoRecommend(user_id)
-        context = {
-            'originals': originals,
-            'predictions': predictions,
-        }
-        return render(request, 'recommendationDemo.html', context)

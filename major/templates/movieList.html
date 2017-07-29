@@ -29,7 +29,12 @@
                     <h2 class="blog-title blog-post-title">
                         <a href="{% url 'movie:movieDetail' movie.slug %}">{{movie.title}}</a>
                     </h2>
+                     <div class="blog-post-meta">
+                            <i class="icon-tag font-blue"></i>
+                            {% for movie in movie.genre.all %}<a href="/movie/list/?q={{movie}}">{{movie}}</a>, {% endfor %}
+                        </div>
                     <span class="movie-stars" data-rating="{{movie.rating}}" data-num-stars="5" ></span>
+
                     <p class="blog-post-desc">
                         {% with description=movie.description|safe %}
                         {{description|truncatewords:"5"}}
@@ -74,7 +79,7 @@
 </div>
 {% endblock %}
 {% block extra_js %}
-    <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
+<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 
 <script>
     $.fn.stars = function() {
