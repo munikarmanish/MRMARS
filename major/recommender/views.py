@@ -8,8 +8,25 @@ from django.http import HttpResponse
 
 class RecommendationDemo(View):
     def get(self, request, *args, **kwargs):
-        originals, predictions = recommender.demoRecommend()
-        # originals, predictions = [], []
+        context = {
+        }
+        return render(request, 'recommendationDemo.html', context)
+
+    def post(self, request, *args, **kwargs):
+        ratings = []
+        ratings.append(int(request.POST.get('a-1', 0)))
+        ratings.append(int(request.POST.get('b-1', 0)))
+        ratings.append(int(request.POST.get('c-1', 0)))
+        ratings.append(int(request.POST.get('d-1', 0)))
+        ratings.append(int(request.POST.get('e-1', 0)))
+        ratings.append(int(request.POST.get('f-1', 0)))
+        ratings.append(int(request.POST.get('g-1', 0)))
+        ratings.append(int(request.POST.get('h-1', 0)))
+        ratings.append(int(request.POST.get('i-1', 0)))
+        ratings.append(int(request.POST.get('j-1', 0)))
+        print(ratings)
+        originals, predictions = recommender.demoRecommend(ratings)
+
         context = {
             'originals': originals,
             'predictions': predictions,

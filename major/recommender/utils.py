@@ -81,22 +81,22 @@ def load_movie_list(filename=os.path.join(settings.BASE_DIR, "recommender", "dat
         return [l.split(' ', 1)[1].strip() for l in f]
 
 
-def demoRecommend():
+def demoRecommend(ratings):
     movies = load_movie_list()
     my_ratings = np.zeros(1000)
-    my_ratings[1 - 1] = 4
-    my_ratings[98 - 1] = 2
-    my_ratings[7 - 1] = 3
-    my_ratings[12 - 1] = 5
-    my_ratings[54 - 1] = 4
-    my_ratings[64 - 1] = 5
-    my_ratings[66 - 1] = 3
-    my_ratings[69 - 1] = 5
-    my_ratings[183 - 1] = 4
-    my_ratings[226 - 1] = 5
-    my_ratings[355 - 1] = 5
+    my_ratings[1 - 1] = ratings[0]
+    my_ratings[98 - 1] = ratings[1]
+    my_ratings[7 - 1] = ratings[2]
+    my_ratings[12 - 1] = ratings[3]
+    my_ratings[54 - 1] = ratings[4]
+    my_ratings[64 - 1] = ratings[5]
+    my_ratings[66 - 1] = ratings[6]
+    my_ratings[69 - 1] = ratings[7]
+    my_ratings[183 - 1] = ratings[8]
+    my_ratings[226 - 1] = ratings[9]
     y_file = os.path.join(settings.BASE_DIR, "recommender", "data", "Y.bin")
     r_file = os.path.join(settings.BASE_DIR, "recommender", "data", "R.bin")
+    movieList = load_movie_list()
     R = load_from_file(r_file)
     Y = load_from_file(y_file).astype(float)
     Y = Y[0:1000, 0:500]
@@ -119,34 +119,12 @@ def demoRecommend():
     logging.info("RECOMMENDATIONS:")
     result = []
     for (i, rating) in recommendations:
-        # logging.info("   <{:.1f}> {}".format(rating, movies[i]))
-        result.append("   <{:.1f}> {}".format(rating, movies[i]))
+        result.append(Movie.objects.get(title=movieList[i]))
 
     return rated, result
 
 
 def recommend(userPK):
-    # movies = Movie.objects.filter(deleted_at=None).order_by('title')
-    # users = User.objects.all().order_by('username')
-    # movieList, userList = [], []
-    # for movie in movies:
-    #     movieList.append(movie.pk)
-    # print(movieList)
-    # for user in users:
-    #     userList.append(user.pk)
-    # print(userList)
-
-    # Y = np.zeros((len(movieList), len(userList)), dtype=float)
-    # R = np.zeros((len(movieList), len(userList)))
-    # reviews = Review.objects.filter(deleted_at=None)
-    # for review in reviews:
-    #     x = movieList.index(review.movie.pk)
-    #     y = userList.index(review.user.pk)
-    #     print(x, y)
-    #     Y[x, y] = review.rating
-    #     R[x, y] = 1
-    # model = Recommender(Y=Y, R=R, reg=10, num_features=10)
-    # model.learn(maxiter=200, verbose=True, normalize=False, tol=1e-1)
     filename = "bin/movieList.bin"
     movieList = load_from_file(filename)
     filename = "bin/userList.bin"
@@ -159,20 +137,14 @@ def recommend(userPK):
     else:
         user_id = userPK
 
-    rated_ids = [i for i in range(model.Y.shape[0]) if model.R[
-        i, user_id] == 1]
-    logging.info("USER {} HAS RATED:".format(user_id))
-    rated = []
-    for i in rated_ids:
-        rated.append("   RATED <{:.1f}> FOR '{}'".format(
-            model.Y[i, user_id], movieList[i]))
+    user = User.objects.get(pk=user_id)
+    reviews = Review.objects.filter(user=user).order_by('-rating')
     recommendations = model.recommendations(user_id=user_id)
     logging.info("RECOMMENDATIONS:")
     result = []
     for (i, rating) in recommendations:
-        result.append("   <{:.1f}> {}".format(rating, movieList[i]))
-
-    return rated, result
+        result.append(Movie.objects.get(pk=int(movieList[i])))
+    return reviews, result
 
 
 def train():

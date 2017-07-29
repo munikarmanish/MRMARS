@@ -85,7 +85,7 @@ class Recommender:
         if self.normalized:
             Ypredicted += self.Ymean.reshape(-1, 1)
         user_predictions = Ypredicted[:, user_id].flatten()
-        recommended_ids = np.flip(user_predictions.argsort()[-11:], axis=0)
+        recommended_ids = np.flip(user_predictions.argsort()[-12:], axis=0)
         return [(i, user_predictions[i]) for i in recommended_ids]
 
     def save(self, filename):
