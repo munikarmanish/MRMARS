@@ -105,7 +105,7 @@ def demoRecommend(ratings):
     R = np.column_stack((my_ratings != 0, R))
 
     model = Recommender(Y=Y, R=R, reg=10, num_features=10)
-    model.learn(maxiter=200, verbose=True, normalize=False, tol=1e-1)
+    model.learn(maxiter=500, verbose=True, normalize=False, tol=1e-1)
     user_id = 0
     rated_ids = [i for i in range(Y.shape[0]) if R[i, user_id] == 1]
     logging.info("USER {} HAS RATED:".format(user_id))
@@ -133,7 +133,7 @@ def recommend(userPK):
     model = Recommender.load(filename)
 
     user = User.objects.get(pk=userPK)
-    reviews = Review.objects.filter(user=user).order_by('-rating')
+    reviews = Review.objects.filter(user=user).order_by('-created_at')
     if userPK > 943:
         return reviews, []
     else:
