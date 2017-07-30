@@ -196,8 +196,10 @@ class MovieDetailView(FormView):
         similarMovies = Movie.objects.filter(
             id__in=similarMoviesId).order_by('-rating')[:4]
         context['similarMovies'] = similarMovies
-        context['is_rated'] = Review.objects.filter(
-            user=self.request.user, movie=self.movie).exists()
+        context['is_rated'] = False
+        if self.request.user.is_authenticated and Review.objects.filter(
+                user=self.request.user, movie=self.movie).exists():
+            context['is_rated'] = True
         print(similarMovies)
 
         return context
