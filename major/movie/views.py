@@ -103,8 +103,19 @@ class ProfileView(View):
         user = User.objects.get(username=userSlug)
         reviews, predictions = recommender.recommend(user.pk)
         movies = Movie.objects.all().order_by('-rating')[:12]
-        print(len(reviews))
+        voteUp = 0
+        voteDown = 0
+        for review in reviews:
+            votes = Vote.objects.filter(review=review)
+            downVotes = votes.filter(up=False)
+            upVotes = votes.filter(up=True)
+            voteUp += len(upVotes)
+            voteDown += len(downVotes)
+
+        reputation = voteUp - voteDown
+
         context = {
+            'reputation': reputation,
             'user': user,
             'reviews': reviews,
             'predictions': predictions,
@@ -198,8 +209,6 @@ class MovieDetailView(FormView):
         similarMovies = Movie.objects.filter(
             id__in=similarMoviesId).order_by('-rating')[:4]
         context['similarMovies'] = similarMovies
-        print(similarMovies)
-
         return context
 
     def form_valid(self, form):
@@ -218,3 +227,71 @@ class MovieDetailView(FormView):
 
 class VoteUpView(View):
     def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        username = kwargs['username']
+        slug = kwargs['slug']
+        review = Review.objects.get(pk=pk)
+        user = User.objects.get(username=username)
+        movie = Movie.objects.get(slug=slug)
+        voteObj = Vote.objects.filter(user=user, review=review)
+        if user == review.user:
+            messages.warning(self.request, 'You cannot vote your own review.')
+            return HttpResponseRedirect(movie.get_absolute_url())
+        if len(voteObj) == 1:
+            if len(voteObj.filter(up=True)) == 1:
+                print('hello')
+                messages.warning(self.request, 'You have already voted up.')
+                return HttpResponseRedirect(movie.get_absolute_url())
+            else:
+                vote = voteObj.first()
+                vote.up = True
+                vote.save()
+                review.vote_count += 1
+                review.save()
+                return HttpResponseRedirect(movie.get_absolute_url())
+        else:
+
+            vote = Vote()
+            vote.user = user
+            vote.review = review
+            vote.up = True
+            vote.save()
+            review.vote_count += 1
+            review.save()
+            return HttpResponseRedirect(movie.get_absolute_url())
+
+
+class VoteDownView(View):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        username = kwargs['username']
+        slug = kwargs['slug']
+        review = Review.objects.get(pk=pk)
+        user = User.objects.get(username=username)
+        movie = Movie.objects.get(slug=slug)
+        voteObj = Vote.objects.filter(user=user, review=review)
+        if user == review.user:
+            messages.warning(self.request, 'You cannot vote your own review.')
+            return HttpResponseRedirect(movie.get_absolute_url())
+        if len(voteObj) == 1:
+            if len(voteObj.filter(up=False)) == 1:
+                print('hello')
+                messages.warning(self.request, 'You have already voted down.')
+                return HttpResponseRedirect(movie.get_absolute_url())
+            else:
+                vote = voteObj.first()
+                vote.up = False
+                vote.save()
+                review.vote_count -= 1
+                review.save()
+                return HttpResponseRedirect(movie.get_absolute_url())
+        else:
+
+            vote = Vote()
+            vote.user = user
+            vote.review = review
+            vote.up = False
+            vote.save()
+            review.vote_count -= 1
+            review.save()
+            return HttpResponseRedirect(movie.get_absolute_url())

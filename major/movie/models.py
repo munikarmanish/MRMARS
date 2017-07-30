@@ -96,7 +96,7 @@ class Vote(Timestampable):
     up = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.username + self.review
+        return self.user.username + self.review.user.username + self.review.movie.title
 
     class Meta:
         unique_together = (("user", "review"),)

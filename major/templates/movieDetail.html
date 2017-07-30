@@ -101,6 +101,19 @@
                                 <span class="review-stars" data-rating="{{review.rating}}" data-num-stars="5" ></span> by
                                     <a href="{% url 'movie:profile' review.user.username  %}">{{review.user.username}}</a>
                                     <span class="c-date">{{review.created_at|timesince}}</span> ago
+                                    <a style="text-decoration: none;" href="{% url 'movie:voteUp' movie.slug review.pk request.user.username %}">
+                                    <button type="button" class="btn btn-success">
+                                        <i class=" glyphicon glyphicon-thumbs-up"></i>
+                                    </button>
+                                    </a>
+                                    <button type="button" class="btn btn-success">
+                                        {{review.vote_count}}
+                                    </button>
+                                    <a style="text-decoration: none;" href="{% url 'movie:voteDown' movie.slug review.pk request.user.username %}">
+                                    <button type="button" class="btn btn-success">
+                                        <i class=" glyphicon glyphicon-thumbs-down"></i>
+                                    </button>
+                                    </a>
                                 </h4>{{review.summary}} </div>
                         </div>
                     {% endfor %}
