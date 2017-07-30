@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 <div class="comments">
-                {% if request.user.is_authenticated %}
+                {% if request.user.is_authenticated and not is_rated %}
                     <h3 class="sbold blog-comments-title">Leave A Review</h3>
                     <form action="." method="POST" >
                     {% csrf_token %}

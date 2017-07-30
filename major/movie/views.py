@@ -188,16 +188,16 @@ class MovieDetailView(FormView):
 
         context['movie'] = self.movie
         context['reviews'] = Review.objects.filter(movie=self.movie)
-        similarMoviesList = []
-        for genre in self.movie.genre.all():
-            movies = Movie.objects.filter(genre=genre)
-            for movie in movies:
-                if movie.rating == 5:
-                    similarMoviesList.append(movie)
-        similarMoviesId = [movie.id for movie in similarMoviesList]
+        similarMoviesId = []
+        movies = Movie.objects.filter(genre__in=self.movie.genre.all())
+        for movie in movies:
+            if movie.rating > 4:
+                similarMoviesId.append(movie.id)
         similarMovies = Movie.objects.filter(
             id__in=similarMoviesId).order_by('-rating')[:4]
         context['similarMovies'] = similarMovies
+        context['is_rated'] = Review.objects.filter(
+            user=self.request.user, movie=self.movie).exists()
         print(similarMovies)
 
         return context
