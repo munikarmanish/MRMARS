@@ -2,8 +2,16 @@ import os
 import pickle
 from collections import defaultdict
 
+from django.conf import settings
 from nltk.parse import CoreNLPParser
 from nltk.tree import ParentedTree
+from pycorenlp import StanfordCoreNLP
+
+try:
+    CORENLP_SERVER = settings.CORENLP_SERVER
+except AttributeError:
+    CORENLP_SERVER = 'http://localhost:9000'
+CoreNLP = StanfordCoreNLP(CORENLP_SERVER)
 
 UNK = 'UNK'
 
@@ -11,7 +19,7 @@ WORD_MAP_FILENAME = 'models/word_map.pickle'
 
 
 def parse(text):
-    parser = CoreNLPParser("http://localhost:9000")
+    parser = CoreNLPParser(CORENLP_SERVER)
     result = parser.raw_parse(text)
     trees = [tree for tree in result]
     for tree in trees:

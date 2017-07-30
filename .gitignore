@@ -9,3 +9,6 @@ major/movie/data/recommender.pickle
 
 # VIM temporary files
 **.swp
+
+# ENV
+major/.env

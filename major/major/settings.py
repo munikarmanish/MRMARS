@@ -12,9 +12,14 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
+import environ
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+root = environ.Path(__file__) - 2
 
+env = environ.Env(DEBUG=(bool, True),)  # set default values and casting
+environ.Env.read_env(root('.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -140,3 +145,6 @@ MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), "root", "media_cdn")
 CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
 
 CKEDITOR_UPLOAD_PATH = "uploads/"
+
+# CORENLP SERVER
+CORENLP_SERVER = env("CORENLP_SERVER", default="http://localhost:9000")

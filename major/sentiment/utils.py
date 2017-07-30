@@ -1,15 +1,6 @@
 import numpy as np
-from django.conf import settings
-
-from pycorenlp import StanfordCoreNLP
 
 from . import tree as tr
-
-try:
-    CORENLP_SERVER = settings.CORENLP_SERVER
-except AttributeError:
-    CORENLP_SERVER = 'http://localhost:9000'
-CoreNLP = StanfordCoreNLP(CORENLP_SERVER)
 
 
 def sentiment_from_rating(rating):
@@ -44,7 +35,7 @@ def rating_from_sentiment(sentiment):
 
 
 def sentences(review):
-    result = CoreNLP.annotate(
+    result = tr.CoreNLP.annotate(
         review, properties={'annotators': 'sentiment', 'outputFormat': 'json'})
     return result['sentences']
 
