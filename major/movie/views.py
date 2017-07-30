@@ -214,3 +214,7 @@ class MovieDetailView(FormView):
         review.rating = sentiment.rating(review.summary)
         review.save()
         return HttpResponseRedirect(self.movie.get_absolute_url())
+
+
+class VoteUpView(View):
+    def get(self, request, *args, **kwargs):
