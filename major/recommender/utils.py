@@ -115,7 +115,7 @@ def demoRecommend(ratings):
         #     Y[i, user_id], movies[i]))
         rated.append("   RATED <{:.1f}> FOR '{}'".format(
             Y[i, user_id], movies[i]))
-    recommendations = model.recommendations(user_id=user_id)
+    recommendations = model.recommendations(user_id=user_id, n=12)
     logging.info("RECOMMENDATIONS:")
     result = []
     for (i, rating) in recommendations:
@@ -124,7 +124,7 @@ def demoRecommend(ratings):
     return rated, result
 
 
-def recommend(userPK):
+def recommend(userPK, n=10):
     filename = "bin/movieList.bin"
     movieList = load_from_file(filename)
     filename = "bin/userList.bin"
@@ -139,7 +139,7 @@ def recommend(userPK):
     else:
         user_id = userPK
 
-    recommendations = model.recommendations(user_id=user_id)
+    recommendations = model.recommendations(user_id=user_id, n=n)
     logging.info("RECOMMENDATIONS:")
     result = []
     for (i, rating) in recommendations:

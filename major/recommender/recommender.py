@@ -1,3 +1,8 @@
+"""
+This module implements a class that represents the low-rank matrix
+factorization-based collaborative-filtering recommender algorithm.
+"""
+
 import logging
 import sys
 
@@ -7,12 +12,31 @@ from scipy.optimize import minimize
 
 class Recommender:
 
+    # Some default parameters
     DEFAULT_NUM_FEATURES = 10
     DEFAULT_REGULARIZATION = 1
     DEFAULT_MAX_ITER = 1000
 
     def __init__(self, num_features=DEFAULT_NUM_FEATURES, normalized=False,
                  reg=DEFAULT_REGULARIZATION, Y=None, R=None):
+        """
+        Initialize the recommender algorithm.
+
+        Parameters
+        ----------
+        num_features : int, optional
+            Number of features to learn for each movie (default is 10).
+        normalized : bool, optional
+            Whether to normalize the dataset or not (default is False).
+        reg : float, optional
+            Reguralization parameter (default is 1).
+        Y : ndarray, optional
+            The user-movie rating matrix where Y[i,j] is the rating given by
+            user j on movie i.
+        R : ndarray, optional
+            The user-movie matrix such that R[i,j] = 1 if user j has rated
+            movie i, and 0 otherwise.
+        """
         self.num_features = num_features
         self.reg = reg
         self.Y = Y
@@ -85,8 +109,15 @@ class Recommender:
         if self.normalized:
             Ypredicted += self.Ymean.reshape(-1, 1)
         user_predictions = Ypredicted[:, user_id].flatten()
-        recommended_ids = np.flip(user_predictions.argsort()[-12:], axis=0)
-        return [(i, user_predictions[i]) for i in recommended_ids]
+        sorted_movie_ids = np.flip(user_predictions.argsort(), axis=0)
+        result = []
+        i = 0
+        while len(result) < n:
+            movie_id = sorted_movie_ids[i]
+            if self.R[movie_id, user_id] == 0:
+                result.append((movie_id, user_predictions[movie_id]))
+            i += 1
+        return result
 
     def save(self, filename):
         from . import utils

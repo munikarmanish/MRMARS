@@ -101,7 +101,7 @@ class ProfileView(View):
     def get(self, request, *args, **kwargs):
         userSlug = kwargs['slug']
         user = User.objects.get(username=userSlug)
-        reviews, predictions = recommender.recommend(user.pk)
+        reviews, predictions = recommender.recommend(user.pk, n=12)
         movies = Movie.objects.all().order_by('-rating')[:12]
         print(len(reviews))
         context = {
