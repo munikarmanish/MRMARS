@@ -133,7 +133,8 @@ def recommend(userPK, n=10):
     model = Recommender.load(filename)
 
     user = User.objects.get(pk=userPK)
-    reviews = Review.objects.filter(user=user).order_by('-created_at')
+    reviews = Review.objects.filter(
+        user=user).order_by('-vote_count', '-created_at')
     if userPK > 943:
         return reviews, []
     else:

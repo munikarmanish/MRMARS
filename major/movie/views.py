@@ -124,7 +124,7 @@ class ProfileView(LoginMixin, View):
         context = {
             'reputation': reputation,
             'user': user,
-            'reviews': reviews,
+            'reviews': reviews[:10],
             'predictions': predictions,
             'movies': movies,
         }
@@ -205,7 +205,8 @@ class MovieDetailView(FormView):
         context = super(MovieDetailView, self).get_context_data(**kwargs)
 
         context['movie'] = self.movie
-        context['reviews'] = Review.objects.filter(movie=self.movie)
+        context['reviews'] = Review.objects.filter(
+            movie=self.movie).order_by('-vote_count', '-created_at')[:10]
         similarMoviesId = []
         movies = Movie.objects.filter(genre__in=self.movie.genre.all())
         for movie in movies:
@@ -234,6 +235,28 @@ class MovieDetailView(FormView):
         review.rating = sentiment.rating(review.summary)
         review.save()
         return HttpResponseRedirect(self.movie.get_absolute_url())
+
+
+class ReviewListView(ListView):
+    model = Review
+    template_name = 'reviewList.html'
+    context_object_name = 'reviews'
+    paginate_by = 10
+
+    def dispatch(self, request, *args, **kwargs):
+        self.movie_slug = kwargs['slug']
+        self.movie = Movie.objects.get(slug=self.movie_slug)
+        return super(ReviewListView, self).dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        reviews = Review.objects.filter(
+            movie=self.movie).order_by('-vote_count', '-created_at')
+        return reviews
+
+    def get_context_data(self, **kwargs):
+        context = super(ReviewListView, self).get_context_data(**kwargs)
+        context['movie'] = self.movie
+        return context
 
 
 class VoteUpView(LoginMixin, View):

@@ -113,6 +113,7 @@
                     </form>
                 {% endif %}
                     <h3 class="sbold blog-comments-title">Reviews</h3>
+                    <hr>
                     <div class="c-comment-list">
                     {% for review in reviews %}
                         <div class="media">
@@ -146,31 +147,18 @@
                                 <span class="review-stars" data-rating="{{review.rating}}" data-num-stars="5" ></span> by
                                     <a href="{% url 'movie:profile' review.user.username  %}">{{review.user.username}}</a>
                                     <span class="c-date">{{review.created_at|timesince}}</span> ago
-                                    {% if request.user.is_authenticated %}
-                                    <a style="text-decoration: none;" href="{% url 'movie:voteUp' movie.slug review.pk request.user.username %}">
-                                    <button type="button" class="btn btn-success">
-                                        <i class=" glyphicon glyphicon-thumbs-up"> {{review.voteUp}}</i>
-                                    </button>
-                                    </a>
-                                    {% endif %}
-
-                                    {% if request.user.is_authenticated %}
-                                    <a style="text-decoration: none;" href="{% url 'movie:voteDown' movie.slug review.pk request.user.username %}">
-                                    <button type="button" class="btn btn-success">
-                                        <i class=" glyphicon glyphicon-thumbs-down"> {{review.voteDown}}</i>
-                                    </button>
-                                    </a>
-                                    {% endif %}
 
                                 </h4>{{review.summary}}
                             </div>
                             </td>
                             </tr>
                             </table>
+
                         </div>
                         <hr>
                     {% endfor %}
                     </div>
+                    <a href="{% url 'movie:reviewList' movie.slug %}"><h5 style="text-align:center;" class="sbold blog-comments-title">Read More....</h5></a>
                 </div>
             </div>
         </div>

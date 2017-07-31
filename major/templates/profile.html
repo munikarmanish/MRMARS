@@ -121,7 +121,7 @@
 <div class="portlet box blue">
     <div class="portlet-title">
         <div class="caption">
-        <i class="fa fa-gift"></i>Some Reviews</div>
+        <i class="fa fa-gift"></i>Latest Reviews</div>
     </div>
     <div class="portlet-body form" >
         <div class="c-comment-list" style="padding:20px;">
@@ -136,6 +136,10 @@
                         <span class="review-stars" data-rating="{{review.rating}}" data-num-stars="5" ></span> on
                         <a href="{% url 'movie:movieDetail' review.movie.slug  %}">{{review.movie.title}}</a>
                         <span class="c-date">{{review.created_at|timesince}}</span> ago
+                                    <button type="button" class="btn btn-success">
+                                        <i class=" glyphicon glyphicon-thumbs-up"> </i> {{review.vote_count}}
+                                        <i class=" glyphicon glyphicon-thumbs-down"></i>
+                                    </button>
                         </h4>{{review.summary}}
                     </div>
                 </div>
