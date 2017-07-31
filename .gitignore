@@ -3,6 +3,7 @@ __pycache__/
 root/
 *.sublime-project
 *.sublime-workspace
+major/.env
 
 # Recommender data file
 major/movie/data/recommender.pickle

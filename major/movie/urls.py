@@ -19,4 +19,9 @@ urlpatterns = [
     url(r'^movie/list/$', MovieListView.as_view(), name="movieList"),
     url(r'^movie/(?P<slug>[\w-]+)/$',
         MovieDetailView.as_view(), name='movieDetail'),
+
+    url(r'^movie/(?P<slug>[\w-]+)/review/(?P<pk>\d+)/user/(?P<username>[\w-]+)/voteup/$',
+        VoteUpView.as_view(), name='voteUp'),
+    url(r'^movie/(?P<slug>[\w-]+)/review/(?P<pk>\d+)/user/(?P<username>[\w-]+)/votedown/$',
+        VoteDownView.as_view(), name='voteDown'),
 ]

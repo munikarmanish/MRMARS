@@ -39,7 +39,7 @@ for i in range(num_movies):
         user = User.objects.get(username=username)
         if Y[i][j] != 0:
             try:
-                print('Creating review {0}->{1} .'.format(username,title))
+                print('Creating review {0}->{1} .'.format(username, title))
                 review = Review()
                 review.user = user
                 review.movie = movie
@@ -47,8 +47,9 @@ for i in range(num_movies):
                 review.rating = Y[i][j]
                 review.save()
 
-                print('Review {0}->{1} successfully created.'.format(username,title))
+                print(
+                    'Review {0}->{1} successfully created.'.format(username, title))
 
             except:
                 print ('There was a problem creating the review: {0}->{1}.  Error: {2}.'
-                       .format(username,title, sys.exc_info()[1]))
+                       .format(username, title, sys.exc_info()[1]))

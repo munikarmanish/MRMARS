@@ -60,6 +60,7 @@ class Review(Timestampable):
     summary = models.CharField(max_length=255)
     review = models.TextField(null=True, blank=True)
     rating = models.FloatField(default=0)
+    vote_count = models.IntegerField(default=0, null=True, blank=True)
 
     class Meta:
         ordering = ["-created_at"]
@@ -68,6 +69,11 @@ class Review(Timestampable):
     def __str__(self):
         return self.user.username + self.movie.title
 
+    def voteUp(self):
+        return len(Vote.objects.filter(review=self, up=True))
+
+    def voteDown(self):
+        return len(Vote.objects.filter(review=self, up=False))
 
 class Prediction(Timestampable):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -87,3 +93,15 @@ class Data(models.Model):
 
     def __str__(self):
         return 'Training data'
+
+
+class Vote(Timestampable):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    review = models.ForeignKey(Review, on_delete=models.CASCADE)
+    up = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.user.username + self.review.user.username + self.review.movie.title
+
+    class Meta:
+        unique_together = (("user", "review"),)

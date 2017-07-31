@@ -7,7 +7,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.db.models import Q
 from django.template.defaultfilters import slugify
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.http import is_safe_url
 
 from .forms import *
 from .models import *
@@ -16,6 +17,12 @@ from sentiment import utils as sentiment
 
 
 # Create your views here.
+
+
+class LoginMixin(LoginRequiredMixin):
+    login_url = '/login/'
+    redirect_field_name = 'next'
+
 
 class Test(TemplateView):
     template_name = "test.html"
@@ -40,7 +47,8 @@ class RegistrationView(View):
             user = authenticate(username=user.username, password=password)
             messages.success(request, "Registration Successful")
             login(request, user)
-            return redirect('movie:test')
+
+            return redirect('movie:movieList')
         else:
             print(userForm.errors)
 
@@ -52,13 +60,12 @@ class RegistrationView(View):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             messages.warning(request, 'You are already registered.')
-            return redirect('movie:test')
+            return redirect('movie:movieList')
         return super(RegistrationView, self).dispatch(request, *args, **kwargs)
 
 
 class LoginView(View):
     def get(self, request):
-
         form = LoginForm()
         context = {
             'form': form,
@@ -74,7 +81,7 @@ class LoginView(View):
             if user and user.is_active:
                 messages.success(request, "Logged In Successfully")
                 login(request, user)
-                return redirect('movie:test')
+                return redirect('movie:movieList')
         messages.warning(request, "Log In Failure")
         context = {
             'form': form,
@@ -84,11 +91,11 @@ class LoginView(View):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated():
             messages.warning(request, 'You are already logged in.')
-            return redirect('movie:test')
+            return redirect('movie:movieList')
         return super(LoginView, self).dispatch(request, *args, **kwargs)
 
 
-class LogoutView(View):
+class LogoutView(LoginMixin, View):
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated():
@@ -97,14 +104,25 @@ class LogoutView(View):
         return redirect('movie:login')
 
 
-class ProfileView(View):
+class ProfileView(LoginMixin, View):
     def get(self, request, *args, **kwargs):
         userSlug = kwargs['slug']
         user = User.objects.get(username=userSlug)
         reviews, predictions = recommender.recommend(user.pk, n=12)
         movies = Movie.objects.all().order_by('-rating')[:12]
-        print(len(reviews))
+        voteUp = 0
+        voteDown = 0
+        for review in reviews:
+            votes = Vote.objects.filter(review=review)
+            downVotes = votes.filter(up=False)
+            upVotes = votes.filter(up=True)
+            voteUp += len(upVotes)
+            voteDown += len(downVotes)
+
+        reputation = voteUp - voteDown
+
         context = {
+            'reputation': reputation,
             'user': user,
             'reviews': reviews,
             'predictions': predictions,
@@ -216,3 +234,75 @@ class MovieDetailView(FormView):
         review.rating = sentiment.rating(review.summary)
         review.save()
         return HttpResponseRedirect(self.movie.get_absolute_url())
+
+
+class VoteUpView(LoginMixin, View):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        username = kwargs['username']
+        slug = kwargs['slug']
+        review = Review.objects.get(pk=pk)
+        user = User.objects.get(username=username)
+        movie = Movie.objects.get(slug=slug)
+        voteObj = Vote.objects.filter(user=user, review=review)
+        if user == review.user:
+            messages.warning(self.request, 'You cannot vote your own review.')
+            return HttpResponseRedirect(movie.get_absolute_url())
+        if len(voteObj) == 1:
+            if len(voteObj.filter(up=True)) == 1:
+                print('hello')
+                messages.warning(self.request, 'You have already voted up.')
+                return HttpResponseRedirect(movie.get_absolute_url())
+            else:
+                vote = voteObj.first()
+                vote.up = True
+                vote.save()
+                review.vote_count += 1
+                review.save()
+                return HttpResponseRedirect(movie.get_absolute_url())
+        else:
+
+            vote = Vote()
+            vote.user = user
+            vote.review = review
+            vote.up = True
+            vote.save()
+            review.vote_count += 1
+            review.save()
+            return HttpResponseRedirect(movie.get_absolute_url())
+
+
+class VoteDownView(LoginMixin, View):
+    def get(self, request, *args, **kwargs):
+        pk = kwargs['pk']
+        username = kwargs['username']
+        slug = kwargs['slug']
+        review = Review.objects.get(pk=pk)
+        user = User.objects.get(username=username)
+        movie = Movie.objects.get(slug=slug)
+        voteObj = Vote.objects.filter(user=user, review=review)
+        if user == review.user:
+            messages.warning(self.request, 'You cannot vote your own review.')
+            return HttpResponseRedirect(movie.get_absolute_url())
+        if len(voteObj) == 1:
+            if len(voteObj.filter(up=False)) == 1:
+                print('hello')
+                messages.warning(self.request, 'You have already voted down.')
+                return HttpResponseRedirect(movie.get_absolute_url())
+            else:
+                vote = voteObj.first()
+                vote.up = False
+                vote.save()
+                review.vote_count -= 1
+                review.save()
+                return HttpResponseRedirect(movie.get_absolute_url())
+        else:
+
+            vote = Vote()
+            vote.user = user
+            vote.review = review
+            vote.up = False
+            vote.save()
+            review.vote_count -= 1
+            review.save()
+            return HttpResponseRedirect(movie.get_absolute_url())
