@@ -122,18 +122,18 @@
                             <div class="vote">
                             {% if request.user.is_authenticated %}
                             <a class="vote-up-off" style="text-decoration: none;" href="{% url 'movie:voteUp' movie.slug review.pk request.user.username %}" >
-                            <i class="glyphicon glyphicon-chevron-up"></i>
+                            <i class="glyphicon glyphicon-thumbs-up"></i>
                             </a>
                             {% else %}
-                            <i class="glyphicon glyphicon-chevron-up"></i>
+                            <i class="glyphicon glyphicon-thumbs-up"></i>
                             {% endif %}
                             <span class="vote-count-post ">{{review.vote_count}}</span>
                             {% if request.user.is_authenticated %}
                             <a class="vote-down-off" style="text-decoration: none;" href="{% url 'movie:voteDown' movie.slug review.pk request.user.username %}" >
-                            <i class="glyphicon glyphicon-chevron-down"></i>
+                            <i class="glyphicon glyphicon-thumbs-down"></i>
                             </a>
                             {% else %}
-                            <i class="glyphicon glyphicon-chevron-down"></i>
+                            <i class="glyphicon glyphicon-thumbs-down"></i>
                             {% endif %}
 
                             </div>
@@ -149,17 +149,15 @@
                                     {% if request.user.is_authenticated %}
                                     <a style="text-decoration: none;" href="{% url 'movie:voteUp' movie.slug review.pk request.user.username %}">
                                     <button type="button" class="btn btn-success">
-                                        <i class=" glyphicon glyphicon-thumbs-up"></i>
+                                        <i class=" glyphicon glyphicon-thumbs-up"> {{review.voteUp}}</i>
                                     </button>
                                     </a>
                                     {% endif %}
-                                    <button type="button" class="btn btn-success">
-                                        {{review.vote_count}}
-                                    </button>
+
                                     {% if request.user.is_authenticated %}
                                     <a style="text-decoration: none;" href="{% url 'movie:voteDown' movie.slug review.pk request.user.username %}">
                                     <button type="button" class="btn btn-success">
-                                        <i class=" glyphicon glyphicon-thumbs-down"></i>
+                                        <i class=" glyphicon glyphicon-thumbs-down"> {{review.voteDown}}</i>
                                     </button>
                                     </a>
                                     {% endif %}

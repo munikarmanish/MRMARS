@@ -3,4 +3,5 @@ __pycache__/
 root/
 *.sublime-project
 *.sublime-workspace
+major/.env
 

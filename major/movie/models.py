@@ -69,6 +69,11 @@ class Review(Timestampable):
     def __str__(self):
         return self.user.username + self.movie.title
 
+    def voteUp(self):
+        return len(Vote.objects.filter(review=self, up=True))
+
+    def voteDown(self):
+        return len(Vote.objects.filter(review=self, up=False))
 
 class Prediction(Timestampable):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
