@@ -81,6 +81,15 @@ def load_movie_list(filename=os.path.join(settings.BASE_DIR, "recommender", "dat
         return [l.split(' ', 1)[1].strip() for l in f]
 
 
+class MovieList(object):
+    movie = ""
+    rating = 0
+
+    def __init__(self, movie, rating):
+        self.movie = movie
+        self.rating = rating
+
+
 def demoRecommend(ratings):
     movies = load_movie_list()
     my_ratings = np.zeros(1000)
@@ -111,10 +120,8 @@ def demoRecommend(ratings):
     logging.info("USER {} HAS RATED:".format(user_id))
     rated = []
     for i in rated_ids:
-        # logging.info("   RATED <{:.1f}> FOR '{}'".format(
-        #     Y[i, user_id], movies[i]))
-        rated.append("   RATED <{:.1f}> FOR '{}'".format(
-            Y[i, user_id], movies[i]))
+        movie = MovieList(movies[i], Y[i, user_id])
+        rated.append(movie)
     recommendations = model.recommendations(user_id=user_id, n=12)
     logging.info("RECOMMENDATIONS:")
     result = []

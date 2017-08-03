@@ -22,7 +22,7 @@ License: You must have a valid license purchased only from themeforest(the above
 
     <head>
         <meta charset="utf-8" />
-        <title>Mr. Mars | User Registration</title>
+        <title>MRMARS| User Registration</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="" name="description" />
@@ -53,8 +53,9 @@ License: You must have a valid license purchased only from themeforest(the above
     <body class=" login">
         <!-- BEGIN LOGO -->
         <div class="logo">
-            <a href="index.html">
-                <img src="{% static 'assets/pages/img/logo-big-white.png' %}" style="height: 17px;" alt="" /> </a>
+            <a href="/">
+            <h1>MRMARS</h1>
+            </a>
         </div>
         <!-- END LOGO -->
         <!-- BEGIN LOGIN -->
@@ -101,7 +102,7 @@ License: You must have a valid license purchased only from themeforest(the above
                     <div id="register_tnc_error"> </div>
                 </div>
                 <div class="form-actions">
-                    <button type="button" id="register-back-btn" class="btn btn-default">Back</button>
+                    <a href="{% url 'movie:login' %}" class="btn-primary btn" id="register-btn">Login</a>
                     <button type="submit" id="register-submit-btn" class="btn red uppercase pull-right">Submit</button>
                 </div>
             </form>

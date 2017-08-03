@@ -166,13 +166,17 @@ class MovieUpdateView(UpdateView):
     model = Movie
     form_class = MovieForm
     template_name = 'movieUpdate.html'
-    success_url = reverse_lazy("movie:test")
+    success_url = reverse_lazy("movie:movieList")
 
     def form_valid(self, form):
         instance = form.save(commit=False)
         instance.slug = slugify(form.cleaned_data.get('title'))
         instance.save()
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print(form.errors)
+        return redirect(reverse_lazy("movie:movieCreate"))
 
 
 class MovieListView(ListView):
@@ -182,7 +186,8 @@ class MovieListView(ListView):
     paginate_by = 16
 
     def get_queryset(self):
-        movies = Movie.objects.filter(deleted_at=None)
+        movies = Movie.objects.filter(
+            deleted_at=None).order_by('-released_date')
         query = self.request.GET.get("q")
         if query:
             movies = movies.filter(

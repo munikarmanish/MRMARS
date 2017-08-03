@@ -280,10 +280,28 @@
         </form>
     </div>
 </div>
-
-{%for original in originals%}
-  <li>{{original}}</li>
-{% endfor %}
+{% if originals %}
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-gift"></i>Your Ratings</div>
+    </div>
+    <div class="portlet-body form">
+    <div style="padding:20px">
+        {% for original in originals %}
+        <div class="row" style="padding-bottom:10px">
+            <div class="col-md-6">
+            {{original.movie}}
+            </div>
+            <div class="col-md-6">
+            <span class="review-stars" data-rating="{{original.rating}}" data-num-stars="5" ></span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </div>
+</div>
+{% endif %}
 {% if predictions %}
 <h1>Recommended Movies</h1>
 <div class=" blog-content-1 grid" data-masonry='{ "itemSelector": ".grid-item"}'>
@@ -345,6 +363,7 @@
     }
 
     $('.movie-stars').stars()
+    $('.review-stars').stars()
 </script>
 <script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.min.js"></script>
 {% endblock %}
