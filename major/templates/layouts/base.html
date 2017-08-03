@@ -48,10 +48,8 @@
                                         <li class="dropdown dropdown-user dropdown-dark">
                                             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
                                                 <img alt="" class="img-circle" src="{% static 'assets/layouts/layout3/img/avatar9.jpg' %}">
-                                                {% if request.user.is_authenticated %}
                                                 <span class="username username-hide-mobile">{{request.user.username}}
                                                 <span class="badge">{{request.user|reputation}}</span></span>
-                                                {% endif %}
                                             </a>
                                             <ul class="dropdown-menu dropdown-menu-default">
                                               {% if request.user.is_authenticated %}
